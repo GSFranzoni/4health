@@ -1,0 +1,38 @@
+version: '3'
+services:
+  quasar:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+    - '8080:8080'
+    volumes:
+    - '.:/app'
+    command: /bin/sh -c "yarn && quasar dev"
+  php:
+    container_name: php
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+        - "8100:80"
+        - "443:443"
+    volumes:
+        - ./backend/public:/var/www/html
+        - ./backend/src:/var/www/src
+    links:
+        - mysql
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+        - /var/lib/mysql
+    ports:
+        - "3310:3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=docker
+        - MYSQL_USER=docker
+        - MYSQL_PASSWORD=docker
+        - MYSQL_DATABASE=forhealth
