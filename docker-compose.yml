@@ -1,6 +1,7 @@
 version: '3'
 services:
   quasar:
+    container_name: quasar
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -9,9 +10,10 @@ services:
     ports:
         - '8080:8080'
     volumes:
-      # - '.:/app'
         - ./frontend:/var/www/quasar
     command: /bin/sh -c "yarn && quasar dev"
+    networks:
+      - "networks-php-general"
   php:
     container_name: php
     build:
@@ -20,22 +22,43 @@ services:
     ports:
         - "8100:80"
         - "443:443"
+    environment:
+      APACHE_DOCUMENT_ROOT: "/var/www/html/public"
     volumes:
-        - ./backend/public:/var/www/html
-        - ./backend/src:/var/www/src
+        - ./backend:/var/www/html
     links:
         - mysql
-  mysql:
-    container_name: mysql
-    image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - "networks-php-general"
+  mysql: 
+    image: "mysql:5.7"
+    container_name: "mysql"
     restart: always
-    volumes:
-        - /var/lib/mysql
-    ports:
-        - "3310:3306"
     environment:
-        - MYSQL_ROOT_PASSWORD=docker
-        - MYSQL_USER=docker
-        - MYSQL_PASSWORD=docker
-        - MYSQL_DATABASE=forhealth
+      MYSQL_ROOT_PASSWORD: "docker"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "FORHEALTH"
+      MYSQL_USER: "docker"
+      MYSQL_PASSWORD: "docker"
+    ports:
+      - "3306:3306"
+    command: --init-file /data/application/model.sql
+    volumes:
+      - ./model.sql:/data/application/model.sql
+    networks:
+      - "networks-php-general"
+networks:
+  networks-php-general:
+    driver: "bridge"
+  # mysql:
+  #   container_name: mysql
+  #   image: mysql:5.7
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   restart: always
+  #   ports:
+  #       - "3310:3306"
+  #   environment:
+  #       - MYSQL_ROOT_PASSWORD=docker
+  #       - MYSQL_USER=docker
+  #       - MYSQL_PASSWORD=docker
+  #       - MYSQL_DATABASE=forhealth

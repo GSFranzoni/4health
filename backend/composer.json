@@ -1,4 +1,29 @@
 {
     "name": "root/app",
-    "require": {}
+    "authors": [
+        {
+            "name": "gsfranzoni",
+            "email": "guilherme.sampaio.franzoni@gmail.com"
+        }
+    ],
+    "require": {
+      "ext-json": "*",
+      "ext-pdo": "*",
+      "slim/psr7": "^1.2",
+      "bissolli/validador-cpf-cnpj": "^1.2",
+        "slim/slim": "4.*",
+        "firebase/php-jwt": "^5.2",
+        "vlucas/phpdotenv": "3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "src/core",
+            "Model\\": "src/model",
+            "Errors\\": "src/errors",
+            "Controller\\": "src/controller",
+            "Middlewares\\": "src/middlewares",
+            "Routes\\": "src/routes",
+            "Dao\\": "src/dao"
+        }
+    }
 }
