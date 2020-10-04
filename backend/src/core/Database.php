@@ -7,9 +7,9 @@ use PDOException;
 
 class Database {
 
-    public static $connection = null;
+    private static $connection = null;
 
-    public static function getInstance() {
+    public static function getInstance(): PDO {
         if(!isset(static::$connection)) {
             try {
                 static::$connection = new PDO(
@@ -28,6 +28,20 @@ class Database {
         return static::$connection;
     }
 
+    public static function getQueryBuilder(): \ClanCats\Hydrahon\Builder {
+        return new \ClanCats\Hydrahon\Builder('mysql', function($query, $queryString, $queryParameters) {
+            $statement = Database::getInstance()->prepare($queryString);
+            $statement->execute($queryParameters);
+            if ($query instanceof \ClanCats\Hydrahon\Query\Sql\FetchableInterface)
+            {
+                return $statement->fetchAll(\PDO::FETCH_ASSOC);
+            }
+        });
+    }
+
+    public static function last(): int {
+        return static::getInstance()->lastInsertId();
+    }
 }
 
 ?>

@@ -2,9 +2,9 @@
 
 namespace Errors;
 
-class ValidationException extends \Exception {
+class ValidationException extends DefaultException {
 
-    public function __construct($message = "Erro de validação", $code = 0, Exception $previous = null) {
+    public function __construct($message = "Erro de validação", $code = 400, DefaultException $previous = null) {
         parent::__construct($message, $code, $previous);
     }
 

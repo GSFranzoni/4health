@@ -27,8 +27,8 @@ class UsuarioRoute {
     }
 
     public function login(Request $request, Response $response, $args) {
-        $cpf = $request->getParsedBody()['cpf'] ?? null;
-        $senha = $request->getParsedBody()['senha'] ?? null;
+        $cpf = $request->getParsedBody()['usr_cpf'] ?? null;
+        $senha = $request->getParsedBody()['usr_senha'] ?? null;
         $response->getBody()->write((new UsuarioController())->login($cpf, $senha));
         return $response;
     }

@@ -2,6 +2,7 @@
 
 namespace Middlewares;
 
+use Errors\UnauthorizedException;
 use Exception;
 use Firebase\JWT\JWT;
 use Throwable;
@@ -12,13 +13,13 @@ class CheckToken
     {
         try {
             $decoded = (array) JWT::decode($token, getenv('secret'), array('HS256'));
-            
+
             if($decoded['usr_id_TIPO_USUARIO'] != $tipo_usuario) {
-                throw new Exception("Acesso não autorizado");
+                throw new UnauthorizedException("Acesso não autorizado");
             }
         }
         catch(Throwable $t) {
-            throw new Exception("Acesso não autorizado");
+            throw new UnauthorizedException();
         }
     }
 }

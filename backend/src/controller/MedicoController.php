@@ -2,16 +2,13 @@
 
 namespace Controller;
 
+use Core\Controller;
 use Model\Medico as Medico;
 
-class MedicoController {
+class MedicoController extends Controller {
 
-    public function get($id) {
-        
-    }
-
-    public function insert($data) {
-        
+    public function __construct() {
+        parent::$model = new Medico;
     }
 
 }

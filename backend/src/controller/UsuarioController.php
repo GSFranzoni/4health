@@ -2,17 +2,26 @@
 
 namespace Controller;
 
-use Dao\UsuarioDao;
+use Core\Controller;
+use Errors\UnauthorizedException;
 use Exception;
 use Model\Usuario;
 use \Firebase\JWT\JWT;
+use Slim\Exception\HttpUnauthorizedException;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
-class UsuarioController {
+class UsuarioController extends Controller {
 
-    public function login($cpf, $senha) {
-        $result = (new UsuarioDao())->get_by_cpf($cpf, $senha);
+    public function __construct() {
+        parent::$model = new Usuario;
+    }
+
+    public function login(Request $request, Response $response, $args) {
+        $data = $request->getParsedBody();
+        $result = parent::$model->get_by_cpf_e_senha($data['usr_cpf'], $data['usr_senha'])[0];
         if(empty($result)) {
-            throw new Exception('Cpf e senha não correspondem!');
+            throw new UnauthorizedException("Cpf e senha não correspondem!");
         }
         $payload = array(
             "usr_id" => $result['usr_id'],
@@ -20,20 +29,31 @@ class UsuarioController {
         );
         JWT::$leeway = 2592000;
         $jwt = JWT::encode($payload, getenv("secret"));
-        return json_encode([
+        $json = json_encode([
             'message' => 'Login efetuado com sucesso!',
             'token' => $jwt,
-            'usuario' => (new UsuarioDao())->get($result['usr_id'])
+            'usuario' => parent::$model->get($result['usr_id'])
         ]);
+        $response->getBody()->write($json);
+        return $response;
     }
 
-    public function me($jwt) {
-        $payload = (array) JWT::decode($jwt, getenv('secret'), array('HS256'));
-        return json_encode([
-            'message' => 'Login efetuado com sucesso!',
-            'token' => $jwt,
-            'usuario' => (new UsuarioDao())->get($payload['usr_id'])
+    public function me(Request $request, Response $response, $args) {
+        $token = $request->getParsedBody()['token'];
+        $payload = null;
+        try {
+            $payload = (array) JWT::decode($token, getenv('secret'), array('HS256'));
+        }
+        catch(Exception $e) {
+            throw new UnauthorizedException();
+        }
+        $json = json_encode([
+            'message' => 'Dados recuperados com sucesso!',
+            'token' => $token,
+            'usuario' => parent::$model->get($payload['usr_id'])
         ]);
+        $response->getBody()->write($json);
+        return $response;
     }
 
 }

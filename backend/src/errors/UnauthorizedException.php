@@ -2,9 +2,9 @@
 
 namespace Errors;
 
-class InvalidPropertyException extends DefaultException {
+class UnauthorizedException extends DefaultException {
 
-    public function __construct($message = "Atributo inexistente", $code = 400, DefaultException $previous = null) {
+    public function __construct($message = "Não existe uma sessão para seu usuário", $code = 401, DefaultException $previous = null) {
         parent::__construct($message, $code, $previous);
     }
 

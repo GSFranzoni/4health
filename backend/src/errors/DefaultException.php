@@ -2,9 +2,11 @@
 
 namespace Errors;
 
-class InvalidPropertyException extends DefaultException {
+use Exception;
 
-    public function __construct($message = "Atributo inexistente", $code = 400, DefaultException $previous = null) {
+class DefaultException extends Exception {
+
+    public function __construct($message = "", $code = 500, Exception $previous = null) {
         parent::__construct($message, $code, $previous);
     }
 

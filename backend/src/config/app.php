@@ -1,14 +1,16 @@
 <?php
 
+use Controller\MedicoController;
+use Controller\PacienteController;
+use Controller\TipoUsuarioController;
+use Controller\UsuarioController;
+use Errors\DefaultException;
 use Middlewares\AdminAuthMiddleware;
-use Slim\Factory\AppFactory;
-use Routes\MedicoRoute;
-use Routes\UsuarioRoute;
-use Middlewares\ExceptionHandler as ExceptionHandler;
 use Middlewares\MedicoAuthMiddleware;
 use Middlewares\PacienteAuthMiddleware;
+use Slim\Factory\AppFactory;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Psr7\Response;
+use Slim\Routing\RouteCollectorProxy;
 
 $dotenv = \Dotenv\Dotenv::create(realpath( __DIR__. '/../../'));
 $dotenv->load();
@@ -28,33 +30,55 @@ use ($app) {
     $response = $app->getResponseFactory()->createResponse();
     $response->getBody()->write(
         json_encode($payload, JSON_UNESCAPED_UNICODE)
-    );
-    return $response->withStatus(500);
+	);
+	$status = 500;
+	if($exception instanceof DefaultException) {
+		$status = $exception->getCode();
+	}
+    return $response->withStatus($status);
 };
 
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 
-$app->get('/medicos/{id}', MedicoRoute::class. '::get')->add(AdminAuthMiddleware::class);
-$app->post('/medicos', MedicoRoute::class. '::insert');
-$app->get('/medicos', MedicoRoute::class. '::getAll');
-$app->get('/usuarios/{id}', UsuarioRoute::class. '::get');
-$app->get('/usuarios', UsuarioRoute::class. '::getAll');
-$app->post('/usuarios/auth', UsuarioRoute::class. '::login');
-$app->post('/usuarios/me', UsuarioRoute::class. '::me');
+
+$app->post('/usuarios/auth', UsuarioController::class. ':login');
+$app->post('/usuarios/me', UsuarioController::class. ':me');
+
+$app->get('/tipos/{id}', TipoUsuarioController::class. ':get');
+$app->get('/tipos', TipoUsuarioController::class. ':getAll');
+$app->get('/medicos/{id}', MedicoController::class. ':get');
+$app->get('/exames', ExameController::class. ':getAll');
+
+$app->get('/pacientes/{id}', PacienteController::class. ':get');
+
+$app->group('', function (RouteCollectorProxy $group) {
+
+	$group->get('/usuarios/{id}', UsuarioController::class. ':get');
+	$group->get('/usuarios', UsuarioController::class. ':getAll');
+
+	$group->post('/medicos', MedicoController::class. ':insert');
+	$group->put('/medicos/{id}', MedicoController::class. ':update');
+	$group->delete('/medicos/{id}', MedicoController::class. ':delete');
+	$group->get('/medicos', MedicoController::class. ':getAll');
+
+	$group->get('/pacientes', PacienteController::class. ':getAll');
+	$group->post('/pacientes', PacienteController::class. '::insert');
+	$group->delete('/pacientes/{id}', PacienteController::class. ':delete');
+	$group->put('/pacientes/{id}', PacienteController::class. ':update');
+
+})->add(new AdminAuthMiddleware());
+
+$app->group('', function (RouteCollectorProxy $group) {
+
+})->add(new MedicoAuthMiddleware());
+
+$app->group('', function (RouteCollectorProxy $group) {
+
+})->add(new PacienteAuthMiddleware());
+
+
+
+
 
 $app->run();
-
-/*
-"medico": {
-		"nome": "med",
-		"especialidade": "neurologista",
-		"crm": "23442",
-		"cpf": "140.526.066-12"
-	},
-	"usuario": {
-		"login": "med1591",
-		"senha": "16159846",
-		"tipo_usuario": 1
-	}
-*/

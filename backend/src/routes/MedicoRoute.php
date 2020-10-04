@@ -25,4 +25,17 @@ class MedicoRoute {
         return $response;
     }
 
+    public function update(Request $request, Response $response, $args) {
+        $primary = $args['id'];
+        $body = $request->getParsedBody();
+        $response->getBody()->write((new Controller(Medico::class))->update($primary, $body));
+        return $response;
+    }
+
+    public function delete(Request $request, Response $response, $args) {
+        $primary = $args['id'];
+        $response->getBody()->write((new Controller(Medico::class))->delete($primary));
+        return $response;
+    }
+
 }

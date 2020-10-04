@@ -1,50 +1,74 @@
 <?php
 namespace Core;
 
+use Errors\DefaultException;
 use Errors\ValidationException as ValidationException;
 use Errors\InvalidPropertyException as InvalidPropertyException;
 use Model\Medico as Medico;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
-class Controller {
+abstract class Controller {
 
-    private $model;
+    protected static $model;
 
-    public function __construct($model) {
-        $this->model = new $model;
-    }
-
-    public function get($id) {
-        $result = $this->model->get($id);
+    public function get(Request $request, Response $response, $args) {
+        $result = self::$model->get($args['id'])[0];
         if(!$result) {
-            throw new \Exception("A chave informada não corresponde à nenhum registro!");
+            throw new DefaultException("A chave informada não corresponde à nenhum registro!", 400);
         }
-        return json_encode([
+        $json = json_encode([
             'message' => 'Registro recuperado com sucesso!',
             'body' => $result
         ]);
+        $response->getBody()->write($json);
+        return $response;
     }
 
-    public function getAll() {
-        return json_encode([
-            'message' => 'Dados salvos com sucesso',
-            'body' => [ $this->model->getAll() ]
+    public function getAll(Request $request, Response $response, $args) {
+        $result  = self::$model->getAll();
+        $json = json_encode([
+            'message' => 'Dados recuperados com sucesso',
+            'body' => $result ?? []
         ]);
+        $response->getBody()->write($json);
+        return $response;
     }
 
-    public function insert($data) {
-        $id = $this->model->save($data);
-        return json_encode([
+    public function insert(Request $request, Response $response, $args) {
+        $data = $request->getParsedBody();
+        $id = self::$model->save($data);
+        $json = json_encode([
             'message' => 'Dados salvos com sucesso',
             'body' => [ 'id' => $id ]
         ]);
+        $response->getBody()->write($json);
+        return $response;
     }
 
-    public function delete($id) {
-
+    public function delete(Request $request, Response $response, $args) {
+        if(!self::$model->get($args['id'])[0]) {
+            throw new DefaultException("A chave informada não corresponde à nenhum registro!", 400);
+        }
+        self::$model->delete($args['id']);
+        $json = json_encode([
+            'message' => 'Registro deletado com sucesso'
+        ]);
+        $response->getBody()->write($json);
+        return $response;
     }
 
-    public function update($id) {
-        
+    public function update(Request $request, Response $response, $args) {
+        if(!self::$model->get($args['id'])[0]) {
+            throw new DefaultException("A chave informada não corresponde à nenhum registro!", 400);
+        }
+        $data = $request->getParsedBody();
+        self::$model->update($args['id'], $data);
+        $json = json_encode([
+            'message' => 'Dados atualizados com sucesso'
+        ]);
+        $response->getBody()->write($json);
+        return $response;
     }
 
 }
