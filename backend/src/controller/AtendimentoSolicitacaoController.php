@@ -26,8 +26,8 @@ class AtendimentoSolicitacaoController extends Controller {
 
     public function insert(Request $request, Response $response, $args) {
         $data = $request->getParsedBody();
-        $by_medico = self::$model->getByMedico($data['ats_id_MEDICO']);
-        $by_paciente = self::$model->getByPaciente($data['ats_id_PACIENTE']);
+        $by_medico = self::$model->getByMedico($data['medico']);
+        $by_paciente = self::$model->getByPaciente($data['paciente']);
         if(!empty($by_medico)) {
             throw new DefaultException("O médico possui uma solicitação de atendimento pendente.", 400);
         }

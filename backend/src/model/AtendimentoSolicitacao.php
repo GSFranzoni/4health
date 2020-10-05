@@ -9,26 +9,26 @@ class AtendimentoSolicitacao extends Model {
 
     function __construct() {
 
-        $this->table = 'TBL_ATENDIMENTO_SOLICITACAO';
+        $this->table = 'ATENDIMENTO_SOLICITACAO';
 
-        $this->primary_key = "ats_id";
+        $this->primary_key = "id";
 
-        $this->fields['ats_id'] = [
+        $this->fields['id'] = [
             'type' => 'integer'
         ];
-        $this->fields['ats_id_PACIENTE'] = [
+        $this->fields['paciente'] = [
             'type' => 'integer',
             'validate' => 'Core\Validation::required'
         ];
-        $this->fields['ats_id_MEDICO'] = [
+        $this->fields['medico'] = [
             'type' => 'integer',
             'validate' => 'Core\Validation::required'
         ];
-        $this->fields['ats_aceito'] = [
+        $this->fields['aceito'] = [
             'type' => 'boolean',
             'nullable' => true
         ];
-        $this->fields['ats_data_atendimento'] = [
+        $this->fields['data_atendimento'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::datetime'
         ];
@@ -36,25 +36,25 @@ class AtendimentoSolicitacao extends Model {
 
     function getByMedico($med_primary) {
         $this->validate([
-            'ats_id_MEDICO' => $med_primary
+            'medico' => $med_primary
         ]);
         return Database::getQueryBuilder()
             ->table($this->table)
             ->select()
-            ->where('ats_id_MEDICO', '=', $med_primary)
-            ->whereNull('ats_aceito')
+            ->where('medico', '=', $med_primary)
+            ->whereNull('aceito')
             ->get();
     }
 
     function getByPaciente($pac_primary) {
         $this->validate([
-            'ats_id_PACIENTE' => $pac_primary
+            'paciente' => $pac_primary
         ]);
         return Database::getQueryBuilder()
             ->table($this->table)
             ->select()
-            ->where('ats_id_PACIENTE', '=', $pac_primary)
-            ->whereNull('ats_aceito')
+            ->where('paciente', '=', $pac_primary)
+            ->whereNull('aceito')
             ->get();
     }
 

@@ -9,30 +9,30 @@ class Exame extends Model {
 
     function __construct() {
 
-        $this->table = 'TBL_EXAME';
+        $this->table = 'EXAME';
 
-        $this->primary_key = "exa_id";
+        $this->primary_key = "id";
 
-        $this->fields['exa_id'] = [
+        $this->fields['id'] = [
             'type' => 'int'
         ];
-        $this->fields['exa_nome'] = [
+        $this->fields['nome'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        $this->fields['exa_resultado'] = [
+        $this->fields['resultado'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        $this->fields['exa_laudo'] = [
+        $this->fields['laudo'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::datetime'
         ];
-        $this->fields['exa_data'] = [
+        $this->fields['data'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::datetime'
         ];
-        $this->fields['exa_id_PACIENTE'] = [
+        $this->fields['paciente'] = [
             'type' => 'integer',
             'validate' => 'Core\Validation::required'
         ];
@@ -42,7 +42,7 @@ class Exame extends Model {
         return Database::getQueryBuilder()
             ->table($this->table)
             ->select($this->keys())
-            ->where('exa_id_PACIENTE', $pac_id)
+            ->where('paciente', $pac_id)
             ->get();  
             
     }

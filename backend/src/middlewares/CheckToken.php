@@ -14,7 +14,7 @@ class CheckToken
         try {
             $decoded = (array) JWT::decode($token, getenv('secret'), array('HS256'));
 
-            if($decoded['usr_id_TIPO_USUARIO'] != $tipo_usuario) {
+            if($decoded['tipo_usuario'] != $tipo_usuario) {
                 throw new UnauthorizedException("Acesso não autorizado");
             }
         }

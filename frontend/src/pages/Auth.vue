@@ -37,7 +37,6 @@ export default {
             AuthService.login(this.cpf, this.senha).then(
                 response => {
                     const { token, usuario } = response.data;
-                    console.log(usuario)
                 }
             ).catch(
                 err => {

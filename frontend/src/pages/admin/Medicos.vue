@@ -1,36 +1,15 @@
 <template>
   <q-page padding>
-    <q-table
+    <List
+      :actions="actions"
+      @create="create"
       title="Médicos"
-      :data="medicos"
       :columns="columns"
-      no-data-label="Nenhum registro encontrado..."
-      row-key="name"
-    >
-      <template v-slot:top-right>
-        <q-btn color="primary" icon="add" round></q-btn>
-      </template>
-      <template v-slot:body-cell-usr_ativo="props">
-        <q-td :props="props">
-          <q-icon
-            v-if="props.row.usr_ativo == 1"
-            size="sm"
-            color="primary"
-            name="check_circle"
-          />
-          <q-icon v-else size="sm" color="red-8" name="cancel" />
-        </q-td>
-      </template>
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
-          <q-fab flat color="black" push icon="settings" direction="right">
-            <q-fab-action color="primary" icon="edit" />
-            <q-fab-action color="red-8" icon="delete" />
-          </q-fab>
-        </q-td>
-      </template>
-    </q-table>
-    <MedicoForm @cancel="cancel" @save="save" />
+      :data="medicos"
+    />
+    <q-dialog v-model="form">
+      <MedicoForm :record="record" @cancel="cancel" @save="save" />
+    </q-dialog>
   </q-page>
 </template>
 
@@ -38,26 +17,41 @@
 import MedicoService from "../../services/MedicoService";
 import Medico from "../../components/Medico";
 import MedicoForm from "../../components/forms/MedicoForm";
+import List from "../../components/lists/List";
 
 export default {
   data() {
     return {
+      form: false,
+      record: null,
       medicos: [],
+      actions: [
+        {
+          icon: "edit",
+          color: "primary",
+          handle: this.edit,
+        },
+        {
+          icon: "delete",
+          color: "red-8",
+          handle: this.confirmRemove,
+        },
+      ],
       columns: [
         { name: "actions", label: "Ações", align: "left" },
-        { name: "usr_cpf", label: "Cpf", field: "usr_cpf", align: "left" },
-        { name: "med_nome", label: "Nome", field: "med_nome", align: "left" },
+        { name: "nome", label: "Nome", field: "nome", align: "left" },
+        { name: "cpf", label: "Cpf", field: "cpf", align: "left" },
         {
-          name: "med_especialidade",
+          name: "especialidade",
           label: "Especialidade",
-          field: "med_especialidade",
+          field: "especialidade",
           align: "left",
         },
-        { name: "med_crm", label: "Crm", field: "med_crm", align: "left" },
+        { name: "crm", label: "Crm", field: "crm", align: "left" },
         {
-          name: "usr_ativo",
+          name: "ativo",
           label: "Ativo",
-          field: "usr_ativo",
+          field: "ativo",
           align: "center",
         },
       ],
@@ -66,19 +60,50 @@ export default {
   components: {
     Medico,
     MedicoForm,
+    List,
   },
   methods: {
-    save($event) {
-        console.log($event)
+    edit($event) {
+      this.record = $event;
+      this.toggleForm();
     },
+    save($event) {
+      console.log($event);
+    },
+    remove(record) {},
     cancel($event) {
-        console.log($event)
+      this.toggleForm();
+    },
+    create() {
+      this.toggleForm();
+    },
+    toggleForm() {
+      this.form = !this.form;
+    },
+    confirmRemove(record) {
+      this.$q
+        .dialog({
+          title: "Confirmação",
+          message: "Você realmente deseja excluir o registro?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          this.remove(record);
+        });
+    },
+  },
+  watch: {
+    form() {
+      if (!this.form) {
+        this.record = null;
+      }
     },
   },
   mounted() {
     MedicoService.getAll().then((response) => {
       this.medicos = response.data.body.map((medico) => {
-        return { ...medico, ...medico.med_usuario };
+        return { ...medico, ...medico.usuario, id: medico.id };
       });
     });
   },

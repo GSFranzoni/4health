@@ -20,13 +20,13 @@ class UsuarioController extends Controller {
 
     public function login(Request $request, Response $response, $args) {
         $data = $request->getParsedBody();
-        $result = parent::$model->getByCpfSenha($data['usr_cpf'], $data['usr_senha'])[0];
+        $result = parent::$model->getByCpfSenha($data['cpf'], $data['senha'])[0];
         if(empty($result)) {
             throw new UnauthorizedException("Cpf e senha não correspondem!");
         }
         $payload = array(
-            "usr_id" => $result['usr_id'],
-            "usr_id_TIPO_USUARIO" => $result['usr_id_TIPO_USUARIO']
+            "id" => $result['id'],
+            "tipo_usuario" => $result['tipo_usuario']
         );
         JWT::$leeway = 2592000;
         $jwt = JWT::encode($payload, getenv("secret"));
@@ -51,7 +51,7 @@ class UsuarioController extends Controller {
         $json = json_encode([
             'message' => 'Dados recuperados com sucesso!',
             'token' => $token,
-            'usuario' => parent::$model->get($payload['usr_id'])
+            'usuario' => parent::$model->get($payload['id'])
         ]);
         $response->getBody()->write($json);
         return $response;
@@ -60,9 +60,7 @@ class UsuarioController extends Controller {
     public function getAll(Request $request, Response $response, $args) {
         $result  = self::$model->getAll();
         foreach ($result as &$row) {
-            $tipo = (new TipoUsuario)->get($row['usr_id_TIPO_USUARIO'])[0];
-            $row['usr_tipo'] = $tipo;
-            unset($row['usr_id_TIPO_USUARIO']);
+            $row['tipo_usuario'] = (new TipoUsuario)->get($row['tipo_usuario'])[0];
         }
         $json = json_encode([
             'message' => 'Dados recuperados com sucesso',

@@ -17,9 +17,7 @@ class PacienteController extends Controller {
     public function getAll(Request $request, Response $response, $args) {
         $result  = self::$model->getAll();
         foreach ($result as &$row) {
-            $usuario = (new Usuario)->get($row['pac_id_USUARIO'])[0];
-            $row['pac_usuario'] = $usuario;
-            unset($row['pac_id_USUARIO']);
+            $row['usuario'] = (new Usuario)->get($row['usuario'])[0];
         }
         $json = json_encode([
             'message' => 'Dados recuperados com sucesso',

@@ -1,73 +1,108 @@
 <template>
   <q-page padding>
-    <q-table
+    <List
+      :actions="actions"
+      @create="create"
       title="Pacientes"
-      :data="pacientes"
       :columns="columns"
-      no-data-label="I didn't find anything for you"
-      row-key="name"
-    >
-      <template v-slot:top-right>
-        <q-btn color="primary" icon="add" round></q-btn>
-      </template>
-      <template v-slot:body-cell-usr_ativo="props">
-        <q-td :props="props">
-          <q-icon
-            v-if="props.row.usr_ativo == 1"
-            size="sm"
-            color="primary"
-            name="check_circle"
-          />
-          <q-icon v-else size="sm" color="red-8" name="cancel" />
-        </q-td>
-      </template>
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
-          <q-fab flat color="black" push icon="settings" direction="right">
-            <q-fab-action color="green" icon="edit" />
-            <q-fab-action color="red-8" icon="delete" />
-          </q-fab>
-        </q-td>
-      </template>
-    </q-table>
+      :data="pacientes"
+    />
+    <q-dialog v-model="form">
+      <PacienteForm :record="record" @cancel="cancel" @save="save" />
+    </q-dialog>
   </q-page>
 </template>
 
 <script>
 import PacienteService from "../../services/PacienteService";
-import Paciente from "../../components/Paciente";
+import List from "../../components/lists/List";
+import PacienteForm from "../../components/forms/PacienteForm";
 
 export default {
   data() {
     return {
+      form: false,
+      record: null,
       pacientes: [],
+      actions: [
+        {
+          icon: "edit",
+          color: "primary",
+          handle: this.edit,
+        },
+        {
+          icon: "delete",
+          color: "red-8",
+          handle: this.confirmRemove,
+        },
+      ],
       columns: [
         { name: "actions", label: "Ações", align: "left" },
-        { name: "usr_cpf", label: "Cpf", field: "usr_cpf", align: "left" },
-        { name: "pac_nome", label: "Nome", field: "pac_nome", align: "left" },
-        { name: "pac_uf", label: "Estado", field: "pac_uf", align: "left" },
+        { name: "nome", label: "Nome", field: "nome", align: "left" },
+        { name: "cpf", label: "Cpf", field: "cpf", align: "left" },
+        { name: "uf", label: "Estado", field: "uf", align: "left" },
         {
-          name: "pac_cidade",
+          name: "cidade",
           label: "Cidade",
-          field: "pac_cidade",
+          field: "cidade",
           align: "left",
         },
         {
-          name: "usr_ativo",
+          name: "ativo",
           label: "Ativo",
-          field: "usr_ativo",
+          field: "ativo",
           align: "center",
         },
       ],
     };
   },
   components: {
-    Paciente,
+    PacienteForm,
+    List,
+  },
+  methods: {
+    edit($event) {
+      this.record = $event;
+      console.log(this.record)
+      this.toggleForm();
+    },
+    save($event) {
+      console.log($event);
+    },
+    remove(record) {},
+    cancel($event) {
+      this.toggleForm();
+    },
+    create() {
+      this.toggleForm();
+    },
+    toggleForm() {
+      this.form = !this.form;
+    },
+    confirmRemove(record) {
+      this.$q
+        .dialog({
+          title: "Confirmação",
+          message: "Você realmente deseja excluir o registro?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          this.remove(record);
+        });
+    },
+  },
+  watch: {
+    form() {
+      if (!this.form) {
+        this.record = null;
+      }
+    },
   },
   mounted() {
     PacienteService.getAll().then((response) => {
       this.pacientes = response.data.body.map((paciente) => {
-        return { ...paciente, ...paciente.pac_usuario };
+        return { ...paciente, ...paciente.usuario, id: paciente.id };
       });
     });
   },

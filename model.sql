@@ -1,84 +1,84 @@
 DROP DATABASE IF EXISTS FORHEALTH;
 CREATE DATABASE FORHEALTH;
 USE FORHEALTH;
-CREATE TABLE TBL_TIPO_USUARIO (
-    tipo_id INT NOT NULL AUTO_INCREMENT,
-    tipo_descricao VARCHAR(255) NOT NULL,
-    CONSTRAINT tipo_pk PRIMARY KEY(tipo_id)
+CREATE TABLE TIPO_USUARIO (
+    id INT NOT NULL AUTO_INCREMENT,
+    descricao VARCHAR(255) NOT NULL,
+    CONSTRAINT pk PRIMARY KEY(id)
 );
-INSERT INTO TBL_TIPO_USUARIO (tipo_id, tipo_descricao) VALUES (1, 'ADMINISTRADOR');
-INSERT INTO TBL_TIPO_USUARIO (tipo_id, tipo_descricao) VALUES (2, 'MÉDICO');
-INSERT INTO TBL_TIPO_USUARIO (tipo_id, tipo_descricao) VALUES (3, 'PACIENTE');
-CREATE TABLE  TBL_USUARIO (
-    usr_id INT NOT NULL AUTO_INCREMENT,
-    usr_cpf VARCHAR(20) NOT NULL,
-    usr_senha VARCHAR(255) NOT NULL,
-    usr_ativo BOOLEAN DEFAULT TRUE,
-    usr_id_TIPO_USUARIO INT NOT NULL,
-    CONSTRAINT usr_unique_cpf UNIQUE(usr_cpf),
-    CONSTRAINT usr_pk PRIMARY KEY(usr_id),
-    CONSTRAINT usr_fk_tipo FOREIGN KEY(usr_id_TIPO_USUARIO) REFERENCES TBL_TIPO_USUARIO(tipo_id)
+INSERT INTO TIPO_USUARIO (id, descricao) VALUES (1, 'ADMINISTRADOR');
+INSERT INTO TIPO_USUARIO (id, descricao) VALUES (2, 'MÉDICO');
+INSERT INTO TIPO_USUARIO (id, descricao) VALUES (3, 'PACIENTE');
+CREATE TABLE USUARIO (
+    id INT NOT NULL AUTO_INCREMENT,
+    cpf VARCHAR(20) NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
+    tipo_usuario INT NOT NULL,
+    CONSTRAINT unique_cpf UNIQUE(cpf),
+    CONSTRAINT pk_usr PRIMARY KEY(id),
+    CONSTRAINT fk_usr_tipo FOREIGN KEY(tipo_usuario) REFERENCES TIPO_USUARIO(id)
 );
-INSERT INTO TBL_USUARIO (usr_id, usr_cpf, usr_senha, usr_ativo, usr_id_TIPO_USUARIO) VALUES (1, '140.526.066.12', '12345678', 1, 1);
-INSERT INTO TBL_USUARIO (usr_id, usr_cpf, usr_senha, usr_ativo, usr_id_TIPO_USUARIO) VALUES (2, '281.701.480-49', '12345678', 1, 2);
-INSERT INTO TBL_USUARIO (usr_id, usr_cpf, usr_senha, usr_ativo, usr_id_TIPO_USUARIO) VALUES (3, '841.243.640-75', '12345678', 1, 3);
-CREATE TABLE TBL_PACIENTE (
-    pac_id INT NOT NULL AUTO_INCREMENT,
-    pac_nome VARCHAR(255) NOT NULL,
-    pac_uf VARCHAR(255) NOT NULL,
-    pac_cidade VARCHAR(255) NOT NULL,
-    pac_logradouro VARCHAR(255) NOT NULL,
-    pac_bairro VARCHAR(255) NOT NULL,
-    pac_numero_casa VARCHAR(255) NOT NULL,
-    pac_telefone VARCHAR(20) NOT NULL,
-    pac_id_USUARIO INT NOT NULL,
-    CONSTRAINT pac_unique_usuario UNIQUE(pac_id_USUARIO),
-    CONSTRAINT pac_pk PRIMARY KEY(pac_id),
-    CONSTRAINT pac_fk_usr FOREIGN KEY(pac_id_USUARIO) REFERENCES TBL_USUARIO(usr_id)
+INSERT INTO USUARIO (id, cpf, senha, ativo, tipo_usuario) VALUES (1, '140.526.066.12', '12345678', 1, 1);
+INSERT INTO USUARIO (id, cpf, senha, ativo, tipo_usuario) VALUES (2, '281.701.480-49', '12345678', 1, 2);
+INSERT INTO USUARIO (id, cpf, senha, ativo, tipo_usuario) VALUES (3, '841.243.640-75', '12345678', 1, 3);
+CREATE TABLE PACIENTE (
+    id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    uf VARCHAR(255) NOT NULL,
+    cidade VARCHAR(255) NOT NULL,
+    logradouro VARCHAR(255) NOT NULL,
+    bairro VARCHAR(255) NOT NULL,
+    numero_casa VARCHAR(255) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    usuario INT NOT NULL,
+    CONSTRAINT unique_paciente_usuario UNIQUE(usuario),
+    CONSTRAINT pk_pac PRIMARY KEY(id),
+    CONSTRAINT fk_pac_usr FOREIGN KEY(usuario) REFERENCES USUARIO(id)
 );
-INSERT INTO TBL_PACIENTE (pac_id, pac_nome, pac_uf, pac_cidade, pac_logradouro, pac_bairro, pac_numero_casa, pac_telefone, pac_id_USUARIO) VALUES(
+INSERT INTO PACIENTE (id, nome, uf, cidade, logradouro, bairro, numero_casa, telefone, usuario) VALUES(
     1, 'José', 'MG', 'Ubá', 'Rua Maria', 'Santana', '159', '6561561651', 3
 );
-CREATE TABLE TBL_MEDICO (
-    med_id INT NOT NULL AUTO_INCREMENT,
-    med_nome VARCHAR(255) NOT NULL,
-    med_crm VARCHAR(20) NOT NULL,
-    med_especialidade VARCHAR(255) NOT NULL,
-    med_id_USUARIO INT NOT NULL,
-    CONSTRAINT med_unique_crm UNIQUE(med_crm),
-    CONSTRAINT med_unique_usuario UNIQUE(med_id_USUARIO),
-    CONSTRAINT dtr_pk PRIMARY KEY(med_id),
-    CONSTRAINT med_fk_usr FOREIGN KEY(med_id_USUARIO) REFERENCES TBL_USUARIO(usr_id)
+CREATE TABLE MEDICO (
+    id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    crm VARCHAR(20) NOT NULL,
+    especialidade VARCHAR(255) NOT NULL,
+    usuario INT NOT NULL,
+    CONSTRAINT unique_crm UNIQUE(crm),
+    CONSTRAINT unique_medico_usuario UNIQUE(usuario),
+    CONSTRAINT med_pk PRIMARY KEY(id),
+    CONSTRAINT fk_med_usr FOREIGN KEY(usuario) REFERENCES USUARIO(id)
 );
-INSERT INTO TBL_MEDICO (med_id, med_nome, med_crm, med_especialidade, med_id_USUARIO) VALUES (1, 'Dr. Luis', '234524', 'Neurologista', 2);
-CREATE TABLE TBL_ATENDIMENTO_SOLICITACAO (
-	ats_id INT NOT NULL AUTO_INCREMENT,
-    ats_id_PACIENTE INT NOT NULL,
-	ats_id_MEDICO INT NOT NULL,
-    ats_aceito BOOLEAN DEFAULT NULL,
-    ats_data_atendimento DATETIME NOT NULL,
-    CONSTRAINT ats_pk PRIMARY KEY(ats_id),
-    CONSTRAINT ats_fk_pac FOREIGN KEY(ats_id_PACIENTE) REFERENCES TBL_PACIENTE(pac_id),
-    CONSTRAINT ats_fk_med FOREIGN KEY(ats_id_MEDICO) REFERENCES TBL_MEDICO(med_id)
+INSERT INTO MEDICO (id, nome, crm, especialidade, usuario) VALUES (1, 'Dr. Luis', '234524', 'Neurologista', 2);
+CREATE TABLE ATENDIMENTO_SOLICITACAO (
+	id INT NOT NULL AUTO_INCREMENT,
+    paciente INT NOT NULL,
+	medico INT NOT NULL,
+    aceito BOOLEAN DEFAULT NULL,
+    data_atendimento DATETIME NOT NULL,
+    CONSTRAINT pk_ats PRIMARY KEY(id),
+    CONSTRAINT fk_ats_pac FOREIGN KEY(paciente) REFERENCES PACIENTE(id),
+    CONSTRAINT fk_ats_med FOREIGN KEY(medico) REFERENCES MEDICO(id)
 );
-INSERT INTO TBL_ATENDIMENTO_SOLICITACAO (ats_id_PACIENTE, ats_id_MEDICO, ats_data_atendimento) VALUES (1, 1, '2020-10-06 20:00:00');
-CREATE TABLE TBL_ATENDIMENTO (
-	ate_id INT NOT NULL AUTO_INCREMENT,
-    ate_id_ATENDIMENTO_SOLICITACAO INT NOT NULL,
-    ate_finalizado DATETIME DEFAULT NULL,
-    CONSTRAINT ate_pk PRIMARY KEY(ate_id),
-    CONSTRAINT ate_fk_ats FOREIGN KEY(ate_id_ATENDIMENTO_SOLICITACAO) REFERENCES TBL_ATENDIMENTO_SOLICITACAO(ats_id)
+INSERT INTO ATENDIMENTO_SOLICITACAO (paciente, medico, data_atendimento) VALUES (1, 1, '2020-10-06 20:00:00');
+CREATE TABLE ATENDIMENTO (
+	id INT NOT NULL AUTO_INCREMENT,
+    atendimento_solicitacao INT NOT NULL,
+    finalizado DATETIME DEFAULT NULL,
+    CONSTRAINT pk_ate PRIMARY KEY(id),
+    CONSTRAINT fk_ate_ats FOREIGN KEY(atendimento_solicitacao) REFERENCES ATENDIMENTO_SOLICITACAO(id)
 );
-CREATE TABLE TBL_EXAME (
-	exa_id INT NOT NULL AUTO_INCREMENT,
-    exa_nome VARCHAR(255) NOT NULL,
-    exa_resultado VARCHAR(800) NOT NULL,
-    exa_id_PACIENTE INT NOT NULL,
-    exa_laudo VARCHAR(800),
-    exa_data DATETIME NOT NULL,
-    CONSTRAINT exa_pk PRIMARY KEY(exa_id),    
-    CONSTRAINT exa_fk_pac FOREIGN KEY(exa_id_PACIENTE) REFERENCES TBL_PACIENTE(pac_id)
+CREATE TABLE EXAME (
+	id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    resultado VARCHAR(800) NOT NULL,
+    paciente INT NOT NULL,
+    laudo VARCHAR(800),
+    data DATETIME NOT NULL,
+    CONSTRAINT pk_exa PRIMARY KEY(id),    
+    CONSTRAINT fk_exa_pac FOREIGN KEY(paciente) REFERENCES PACIENTE(id)
 );
-INSERT INTO TBL_EXAME(exa_nome, exa_resultado, exa_id_PACIENTE, exa_laudo, exa_data) VALUES (
+INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
     'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );
