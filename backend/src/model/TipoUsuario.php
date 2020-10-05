@@ -8,14 +8,14 @@ class TipoUsuario extends Model {
 
     function __construct() {
 
-        parent::$table = 'TBL_TIPO_USUARIO';
+        $this->table = 'TBL_TIPO_USUARIO';
 
-        parent::$primary_key = "tipo_id";
+        $this->primary_key = "tipo_id";
 
-        parent::$fields['tipo_id'] = [
-            'type' => 'int'
+        $this->fields['tipo_id'] = [
+            'type' => 'integer'
         ];
-        parent::$fields['tipo_descricao'] = [
+        $this->fields['tipo_descricao'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required' 
         ];

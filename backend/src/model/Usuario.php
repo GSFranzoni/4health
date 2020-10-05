@@ -9,39 +9,38 @@ class Usuario extends Model {
 
     function __construct() {
 
-        parent::$table = 'TBL_USUARIO';
+        $this->table = 'TBL_USUARIO';
 
-        parent::$primary_key = "usr_id";
+        $this->primary_key = "usr_id";
 
-        parent::$fields['usr_id'] = [
-            'type' => 'int'
+        $this->fields['usr_id'] = [
+            'type' => 'integer'
         ];
-        parent::$fields['usr_cpf'] = [
+        $this->fields['usr_cpf'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::cpf' 
         ];
-        parent::$fields['usr_senha'] = [
+        $this->fields['usr_senha'] = [
             'type' => 'string',
-            'validate' => 'Core\Validation::required',
+            'validate' => 'Core\Validation::password',
             'hidden' => true 
         ];
-        parent::$fields['usr_ativo'] = [
-            'type' => 'boolean',
-            'validate' => 'Core\Validation::required' 
+        $this->fields['usr_ativo'] = [
+            'type' => 'boolean'
         ];
-        parent::$fields['usr_id_TIPO_USUARIO'] = [
-            'type' => 'int',
+        $this->fields['usr_id_TIPO_USUARIO'] = [
+            'type' => 'integer',
             'validate' => 'Core\Validation::required' 
         ];
     }
 
-    public function get_by_cpf_e_senha($cpf, $senha) {
+    public function getByCpfSenha($cpf, $senha) {
         $this->validate([
             'usr_cpf' => $cpf,
             'usr_senha' => $senha
         ]);
         return Database::getQueryBuilder()
-            ->table(parent::$table)
+            ->table($this->table)
             ->select()
             ->where('usr_cpf', $cpf)
             ->where('usr_senha', $senha)

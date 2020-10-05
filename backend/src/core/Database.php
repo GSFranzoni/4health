@@ -16,8 +16,8 @@ class Database {
                     "mysql:host=".getenv("host"). 
                     ";port=".getenv("port").
                     ";dbname=".getenv("database"),
-                    "docker",
-                    "docker"
+                    getenv("user"),
+                    getenv("password")
                 );
                 static::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }

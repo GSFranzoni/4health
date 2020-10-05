@@ -9,26 +9,26 @@ class Medico extends Model {
 
     function __construct() {
 
-        parent::$table = 'TBL_MEDICO';
+        $this->table = 'TBL_MEDICO';
 
-        parent::$primary_key = "med_id";
+        $this->primary_key = "med_id";
 
-        parent::$fields['med_id'] = [
-            'type' => 'int'
+        $this->fields['med_id'] = [
+            'type' => 'integer'
         ];
-        parent::$fields['med_nome'] = [
+        $this->fields['med_nome'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required' 
         ];
-        parent::$fields['med_crm'] = [
+        $this->fields['med_crm'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required' 
         ];
-        parent::$fields['med_especialidade'] = [
+        $this->fields['med_especialidade'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required' 
         ];
-        parent::$fields['med_id_USUARIO'] = [
+        $this->fields['med_id_USUARIO'] = [
             'type' => 'integer',
             'validate' => 'Core\Validation::required' 
         ];

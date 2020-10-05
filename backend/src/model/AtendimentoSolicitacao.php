@@ -7,33 +7,54 @@ use Core\Model;
 
 class AtendimentoSolicitacao extends Model {
 
-    static $table = 'TBL_ATENDIMENTO_SOLICITACAO';
-
-    static $primary_key = "ats_id";
-
     function __construct() {
 
-        parent::$fields['ats_id'] = [
-            'type' => 'int'
+        $this->table = 'TBL_ATENDIMENTO_SOLICITACAO';
+
+        $this->primary_key = "ats_id";
+
+        $this->fields['ats_id'] = [
+            'type' => 'integer'
         ];
-        parent::$fields['ats_id_PACIENTE'] = [
-            'type' => 'int',
+        $this->fields['ats_id_PACIENTE'] = [
+            'type' => 'integer',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['ats_id_MEDICO'] = [
-            'type' => 'int',
+        $this->fields['ats_id_MEDICO'] = [
+            'type' => 'integer',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['ats_aceito'] = [
-            'type' => 'boolean'
+        $this->fields['ats_aceito'] = [
+            'type' => 'boolean',
+            'nullable' => true
+        ];
+        $this->fields['ats_data_atendimento'] = [
+            'type' => 'string',
+            'validate' => 'Core\Validation::datetime'
         ];
     }
 
-    function get_by_med($med_primary) {
+    function getByMedico($med_primary) {
+        $this->validate([
+            'ats_id_MEDICO' => $med_primary
+        ]);
         return Database::getQueryBuilder()
-            ->table(parent::$table)
+            ->table($this->table)
             ->select()
             ->where('ats_id_MEDICO', '=', $med_primary)
+            ->whereNull('ats_aceito')
+            ->get();
+    }
+
+    function getByPaciente($pac_primary) {
+        $this->validate([
+            'ats_id_PACIENTE' => $pac_primary
+        ]);
+        return Database::getQueryBuilder()
+            ->table($this->table)
+            ->select()
+            ->where('ats_id_PACIENTE', '=', $pac_primary)
+            ->whereNull('ats_aceito')
             ->get();
     }
 

@@ -8,42 +8,42 @@ class Paciente extends Model {
 
     function __construct() {
 
-        parent::$table = 'TBL_PACIENTE';
+        $this->table = 'TBL_PACIENTE';
 
-        parent::$primary_key = "pac_id";
+        $this->primary_key = "pac_id";
 
-        parent::$fields['pac_id'] = [
-            'type' => 'int'
+        $this->fields['pac_id'] = [
+            'type' => 'integer'
         ];
-        parent::$fields['pac_nome'] = [
+        $this->fields['pac_nome'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['pac_uf'] = [
+        $this->fields['pac_uf'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['pac_cidade'] = [
+        $this->fields['pac_cidade'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['pac_logradouro'] = [
+        $this->fields['pac_logradouro'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['pac_bairro'] = [
+        $this->fields['pac_bairro'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['pac_numero_casa'] = [
+        $this->fields['pac_numero_casa'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['pac_telefone'] = [
+        $this->fields['pac_telefone'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['pac_id_USUARIO'] = [
+        $this->fields['pac_id_USUARIO'] = [
             'type' => 'integer',
             'validate' => 'Core\Validation::required'
         ];

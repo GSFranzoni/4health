@@ -7,14 +7,14 @@ use Core\Dao as Dao;
 
 abstract class Model {
 
-    static $fields = [];
-    static $table = "", $primary_key = "id";
+    protected $fields = [], $table = "", $primary_key = "";
 
     public function save($data) {
-        $values = $this->valid_fields($data);
-        $this->validate_all($values);
+        $data[$this->primary_key] = 0;
+        $values = $this->validFields($data);
+        $this->validateAll($values);
         Database::getQueryBuilder()
-            ->table(self::$table)
+            ->table($this->table)
             ->insert($values)
             ->execute();
         return Database::last();
@@ -22,77 +22,80 @@ abstract class Model {
 
     public function get(int $primary) {
         return Database::getQueryBuilder()
-            ->table(self::$table)
-            ->select()
-            ->where(self::$primary_key, '=', $primary)
+            ->table($this->table)
+            ->select($this->keysNotHidden())
+            ->where($this->primary_key, '=', $primary)
             ->get();
     }
 
     public function getAll() {
         return Database::getQueryBuilder()
-            ->table(self::$table)
-            ->select()
+            ->table($this->table)
+            ->select($this->keysNotHidden())
             ->get();
     }
 
     public function update($primary, $data) {
-        $values = $this->valid_fields($data);
+        $values = $this->validFields($data);
         $this->validate($values);
         return Database::getQueryBuilder()
-            ->table(self::$table)
+            ->table($this->table)
             ->update($values)
-            ->where(self::$primary_key, '=', $primary)
+            ->where($this->primary_key, '=', $primary)
             ->execute();
     }
 
     public function delete($primary) {
         return Database::getQueryBuilder()
-            ->table(self::$table)
+            ->table($this->table)
             ->delete()
-            ->where(self::$primary_key, '=', $primary)
+            ->where($this->primary_key, '=', $primary)
             ->execute();
     }
 
     protected function validate($data) {
         foreach ($data as $key => $value) {
-            $field = self::$fields[$key];
-            $this->check_field_validate($key, $value);
-            $this->check_type_validate($key, $value, $field['type']);
+            $field = $this->fields[$key];
+            $this->checkFieldValidate($key, $value);
+            $this->checkTypeValidate($key, $value, $field['type']);
         }
     }
 
-    protected function validate_all($data) {
-        foreach (self::$fields as $key => $value) {
-            $this->check_field_validate($key, $data[$key]);
-            $this->check_type_validate($key, $data[$key], $value['type']);
+    protected function validateAll($data) {
+        foreach ($this->fields as $key => $value) {
+            $this->checkFieldValidate($key, $data[$key]);
+            $this->checkTypeValidate($key, $data[$key], $value['type']);
         }
     }
 
-    protected function check_field_validate($key, $value) {
-        $validate_function = self::$fields[$key]['validate'];
+    protected function checkFieldValidate($key, $value) {
+        $validate_function = $this->fields[$key]['validate'];
         if($validate_function and !call_user_func($validate_function, $value)) {
             throw new ValidationException("Erro de validação: o campo $key tem um valor inválido!");
         }
     }
 
-    protected function check_type_validate($key, $value, $type) {
+    protected function checkTypeValidate($key, $value, $type) {
+        if(empty($value) and !empty($this->fields[$key]['nullable'])) {
+            return;
+        }
         if(!call_user_func_array('Core\Validation::type', [ $value, $type ])) {
             throw new ValidationException("Erro de validação: o campo $key tem um tipo inválido!");
         }
     }
 
-    public function keys_not_hidden() {
-        $not_hidden = array_filter(self::$fields, function ($field) {
-            return !array_key_exists('hidden', self::$fields[$field]);
+    public function keysNotHidden() {
+        $not_hidden = array_filter($this->fields, function ($field) {
+            return !array_key_exists('hidden', $this->fields[$field]);
         }, ARRAY_FILTER_USE_KEY);
         return array_keys($not_hidden);
     }
 
     public function keys() {
-        return array_keys(self::$fields);
+        return array_keys($this->fields);
     }
 
-    private function valid_fields($data) {
+    private function validFields($data) {
         return array_filter($data, function ($key) {
             return in_array($key, $this->keys());
         }, ARRAY_FILTER_USE_KEY);

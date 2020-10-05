@@ -10,11 +10,11 @@ use Slim\Psr7\Response;
 class ExameController extends Controller {
 
     public function __construct() {
-        parent::$model = new Exame();
+        parent::$model = new Exame;
     }
 
-    public function get_by_paciente(Request $request, Response $response, $args) {
-        $result  = self::$model->get_by_paciente();
+    public function getByPaciente(Request $request, Response $response, $args) {
+        $result  = self::$model->getByPaciente($args['id']);
         $json = json_encode([
             'message' => 'Dados recuperados com sucesso',
             'body' => $result ?? []

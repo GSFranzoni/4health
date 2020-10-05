@@ -11,36 +11,38 @@ class Exame extends Model {
 
         $this->table = 'TBL_EXAME';
 
-        parent::$primary_key = "exa_id";
+        $this->primary_key = "exa_id";
 
-        parent::$fields['exa_id'] = [
+        $this->fields['exa_id'] = [
             'type' => 'int'
         ];
-        parent::$fields['exa_id_ATENDIMENTO'] = [
-            'type' => 'int',
-            'validate' => 'Core\Validation::required'
-        ];
-        parent::$fields['exa_nome'] = [
+        $this->fields['exa_nome'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['exa_resultado'] = [
+        $this->fields['exa_resultado'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['exa_laudo'] = [
-            'type' => 'string'
+        $this->fields['exa_laudo'] = [
+            'type' => 'string',
+            'validate' => 'Core\Validation::datetime'
         ];
-        parent::$fields['exa_data'] = [
-            'type' => 'string'
+        $this->fields['exa_data'] = [
+            'type' => 'string',
+            'validate' => 'Core\Validation::datetime'
+        ];
+        $this->fields['exa_id_PACIENTE'] = [
+            'type' => 'integer',
+            'validate' => 'Core\Validation::required'
         ];
     }
 
-    public function get_by_paciente($pac_id) {
+    public function getByPaciente($pac_id) {
         return Database::getQueryBuilder()
-            ->table(parent::$table)
-            ->select(parent::$table. ".*")
-            ->join(AtendimentoSolicitacao::$table, AtendimentoSolicitacao::$primary_key, "=", parent::$primary_key)
+            ->table($this->table)
+            ->select($this->keys())
+            ->where('exa_id_PACIENTE', $pac_id)
             ->get();  
             
     }

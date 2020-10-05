@@ -1,5 +1,7 @@
 <?php
 
+use Controller\AtendimentoSolicitacaoController;
+use Controller\ExameController;
 use Controller\MedicoController;
 use Controller\PacienteController;
 use Controller\TipoUsuarioController;
@@ -8,14 +10,15 @@ use Errors\DefaultException;
 use Middlewares\AdminAuthMiddleware;
 use Middlewares\MedicoAuthMiddleware;
 use Middlewares\PacienteAuthMiddleware;
-use Slim\Factory\AppFactory;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
 
 $dotenv = \Dotenv\Dotenv::create(realpath( __DIR__. '/../../'));
 $dotenv->load();
 
 $app = AppFactory::create();
+
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 $customErrorHandler = function (
@@ -48,7 +51,11 @@ $app->post('/usuarios/me', UsuarioController::class. ':me');
 $app->get('/tipos/{id}', TipoUsuarioController::class. ':get');
 $app->get('/tipos', TipoUsuarioController::class. ':getAll');
 $app->get('/medicos/{id}', MedicoController::class. ':get');
-$app->get('/exames', ExameController::class. ':getAll');
+$app->get('/pacientes/{id}/exames', ExameController::class. ':getByPaciente');
+$app->get('/medicos/{id}/solicitacoes', AtendimentoSolicitacaoController::class. ':getByMedico');
+$app->post('/solicitacoes', AtendimentoSolicitacaoController::class. ':insert');
+$app->get('/solicitacoes', AtendimentoSolicitacaoController::class. ':getAll');
+$app->get('/exames/{id}', ExameController::class. ':get');
 
 $app->get('/pacientes/{id}', PacienteController::class. ':get');
 
@@ -56,6 +63,7 @@ $app->group('', function (RouteCollectorProxy $group) {
 
 	$group->get('/usuarios/{id}', UsuarioController::class. ':get');
 	$group->get('/usuarios', UsuarioController::class. ':getAll');
+	$group->put('/usuarios/{id}', UsuarioController::class. ':update');
 
 	$group->post('/medicos', MedicoController::class. ':insert');
 	$group->put('/medicos/{id}', MedicoController::class. ':update');
@@ -63,11 +71,11 @@ $app->group('', function (RouteCollectorProxy $group) {
 	$group->get('/medicos', MedicoController::class. ':getAll');
 
 	$group->get('/pacientes', PacienteController::class. ':getAll');
-	$group->post('/pacientes', PacienteController::class. '::insert');
+	$group->post('/pacientes', PacienteController::class. ':insert');
 	$group->delete('/pacientes/{id}', PacienteController::class. ':delete');
 	$group->put('/pacientes/{id}', PacienteController::class. ':update');
 
-})->add(new AdminAuthMiddleware());
+})/*->add(new AdminAuthMiddleware())*/;
 
 $app->group('', function (RouteCollectorProxy $group) {
 

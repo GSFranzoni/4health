@@ -8,20 +8,19 @@ class Atendimento extends Model {
 
     function __construct() {
 
-        parent::$table = 'TBL_ATENDIMENTO';
+        $this->table = 'TBL_ATENDIMENTO';
 
-        parent::$primary_key = "ate_id";
+        $this->primary_key = "ate_id";
 
-        parent::$fields['ate_id'] = [
-            'type' => 'int'
+        $this->fields['ate_id'] = [
+            'type' => 'integer'
         ];
-        parent::$fields['ate_id_ATENDIMENTO_SOLICITACAO'] = [
-            'type' => 'int',
+        $this->fields['ate_id_ATENDIMENTO_SOLICITACAO'] = [
+            'type' => 'integer',
             'validate' => 'Core\Validation::required'
         ];
-        parent::$fields['ate_finalizado'] = [
-            'type' => 'string',
-            'validate' => 'Core\Validation::required'
+        $this->fields['ate_finalizado'] = [
+            'type' => 'string'
         ];
     }
 
