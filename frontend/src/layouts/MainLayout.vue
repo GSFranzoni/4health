@@ -11,7 +11,7 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
         <q-toolbar-title> 4HEALTH </q-toolbar-title>
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn flat color="white" label="Sair" @click="logout"></q-btn>
       </q-toolbar>
     </q-header>
 
@@ -33,6 +33,7 @@
 
     <q-page-container
       ><transition
+        mode="out-in"
         enter-active-class="animated fadeIn"
         leave-active-class="animated fadeOut"
       >
@@ -55,12 +56,7 @@ const linksData = [
     title: "Médicos",
     icon: "favorite",
     link: "/admin/medicos",
-  },
-  {
-    title: "Sair",
-    icon: "power_settings_new",
-    link: "/logout",
-  },
+  }
 ];
 
 export default {
@@ -72,5 +68,11 @@ export default {
       essentialLinks: linksData,
     };
   },
+  methods: {
+    logout() {
+      this.$store.commit('logout');
+      this.$router.push('/auth');
+    }
+  }
 };
 </script>

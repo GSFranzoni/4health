@@ -1,0 +1,27 @@
+{
+    "columns": [
+        {
+            "name": "actions",
+            "label": "Ações",
+            "align": "left"
+        },
+        {
+            "name": "nome",
+            "label": "Nome",
+            "field": "nome",
+            "align": "left"
+        },
+        {
+            "name": "uf",
+            "label": "Estado",
+            "field": "uf",
+            "align": "left"
+        },
+        {
+            "name": "cidade",
+            "label": "Cidade",
+            "field": "cidade",
+            "align": "left"
+        }
+    ]
+}

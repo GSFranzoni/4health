@@ -4,7 +4,12 @@
   </div>
 </template>
 <script>
+import AuthService from './services/AuthService';
+import Notification from './util/Notification';
+
 export default {
-  name: 'App'
+  name: 'App',
+  mounted() {
+  },
 }
 </script>

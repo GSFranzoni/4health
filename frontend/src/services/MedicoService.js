@@ -4,6 +4,18 @@ export default {
 
     getAll: () => {
         return axios.get('http://localhost:8100/medicos');
+    },
+    get: (id) => {
+        return axios.get(`http://localhost:8100/medicos/${id}`);
+    },
+    insert: (medico) => {
+        return axios.post(`http://localhost:8100/medicos`, medico);
+    },
+    update: (id, medico) => {
+        return axios.put(`http://localhost:8100/medicos/${id}`, medico);
+    },
+    delete: (id) => {
+        return axios.delete(`http://localhost:8100/medicos/${id}`);
     }
     
 };

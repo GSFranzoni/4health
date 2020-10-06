@@ -13,7 +13,7 @@ abstract class Controller {
     protected static $model;
 
     public function get(Request $request, Response $response, $args) {
-        $result = self::$model->get($args['id'])[0];
+        $result = self::$model->get($args['id']);
         if(!$result) {
             throw new DefaultException("A chave informada não corresponde à nenhum registro!", 400);
         }
@@ -47,7 +47,7 @@ abstract class Controller {
     }
 
     public function delete(Request $request, Response $response, $args) {
-        if(!self::$model->get($args['id'])[0]) {
+        if(!self::$model->get($args['id'])) {
             throw new DefaultException("A chave informada não corresponde à nenhum registro!", 400);
         }
         self::$model->delete($args['id']);
@@ -59,7 +59,7 @@ abstract class Controller {
     }
 
     public function update(Request $request, Response $response, $args) {
-        if(!self::$model->get($args['id'])[0]) {
+        if(!self::$model->get($args['id'])) {
             throw new DefaultException("A chave informada não corresponde à nenhum registro!", 400);
         }
         $data = $request->getParsedBody();

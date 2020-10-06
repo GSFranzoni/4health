@@ -7,6 +7,8 @@ use Errors\UnauthorizedException;
 use Exception;
 use Model\Usuario;
 use \Firebase\JWT\JWT;
+use Model\Medico;
+use Model\Paciente;
 use Model\TipoUsuario;
 use Slim\Exception\HttpUnauthorizedException;
 use Slim\Psr7\Request;
@@ -20,7 +22,7 @@ class UsuarioController extends Controller {
 
     public function login(Request $request, Response $response, $args) {
         $data = $request->getParsedBody();
-        $result = parent::$model->getByCpfSenha($data['cpf'], $data['senha'])[0];
+        $result = parent::$model->getByCpfSenha($data['cpf'], $data['senha']);
         if(empty($result)) {
             throw new UnauthorizedException("Cpf e senha não correspondem!");
         }
@@ -28,15 +30,26 @@ class UsuarioController extends Controller {
             "id" => $result['id'],
             "tipo_usuario" => $result['tipo_usuario']
         );
-        JWT::$leeway = 2592000;
+        JWT::$leeway = getenv("leeway");
         $jwt = JWT::encode($payload, getenv("secret"));
         $json = json_encode([
             'message' => 'Login efetuado com sucesso!',
             'token' => $jwt,
-            'usuario' => $result
+            'usuario' => $result,
+            'info' => $this->getInfo($result['tipo_usuario'], $result['id'])
         ]);
         $response->getBody()->write($json);
         return $response;
+    }
+
+    private function getInfo($tipo, $usr_id) {
+        if($tipo == 2) {
+            return (new Medico)->getByUsuario($usr_id);
+        }
+        if($tipo == 3) {
+            return (new Paciente)->getByUsuario($usr_id);
+        }
+        return [];
     }
 
     public function me(Request $request, Response $response, $args) {
@@ -51,7 +64,8 @@ class UsuarioController extends Controller {
         $json = json_encode([
             'message' => 'Dados recuperados com sucesso!',
             'token' => $token,
-            'usuario' => parent::$model->get($payload['id'])
+            'usuario' => parent::$model->get($payload['id']),
+            'info' => $this->getInfo($payload['tipo_usuario'], $payload['id'])
         ]);
         $response->getBody()->write($json);
         return $response;
@@ -60,11 +74,39 @@ class UsuarioController extends Controller {
     public function getAll(Request $request, Response $response, $args) {
         $result  = self::$model->getAll();
         foreach ($result as &$row) {
-            $row['tipo_usuario'] = (new TipoUsuario)->get($row['tipo_usuario'])[0];
+            $row['tipo_usuario'] = (new TipoUsuario)->get($row['tipo_usuario']);
         }
         $json = json_encode([
             'message' => 'Dados recuperados com sucesso',
             'body' => $result ?? []
+        ]);
+        $response->getBody()->write($json);
+        return $response;
+    }
+
+    public function insertPaciente(Request $request, Response $response, $args) {
+        $data = $request->getParsedBody();
+        $paciente_id = $args['id'];
+        $data['tipo_usuario'] = 3;
+        $id = self::$model->save($data);
+        (new Paciente)->update($paciente_id, ['usuario' => $id]);
+        $json = json_encode([
+            'message' => 'Dados salvos com sucesso',
+            'body' => [ 'id' => $id ]
+        ]);
+        $response->getBody()->write($json);
+        return $response;
+    }
+
+    public function insertMedico(Request $request, Response $response, $args) {
+        $data = $request->getParsedBody();
+        $medico_id = $args['id'];
+        $data['tipo_usuario'] = 2;
+        $id = self::$model->save($data);
+        (new Medico)->update($medico_id, ['usuario' => $id]);
+        $json = json_encode([
+            'message' => 'Dados salvos com sucesso',
+            'body' => [ 'id' => $id ]
         ]);
         $response->getBody()->write($json);
         return $response;

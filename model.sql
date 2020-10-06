@@ -31,7 +31,7 @@ CREATE TABLE PACIENTE (
     bairro VARCHAR(255) NOT NULL,
     numero_casa VARCHAR(255) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
-    usuario INT NOT NULL,
+    usuario INT,
     CONSTRAINT unique_paciente_usuario UNIQUE(usuario),
     CONSTRAINT pk_pac PRIMARY KEY(id),
     CONSTRAINT fk_pac_usr FOREIGN KEY(usuario) REFERENCES USUARIO(id)
@@ -44,7 +44,7 @@ CREATE TABLE MEDICO (
     nome VARCHAR(255) NOT NULL,
     crm VARCHAR(20) NOT NULL,
     especialidade VARCHAR(255) NOT NULL,
-    usuario INT NOT NULL,
+    usuario INT,
     CONSTRAINT unique_crm UNIQUE(crm),
     CONSTRAINT unique_medico_usuario UNIQUE(usuario),
     CONSTRAINT med_pk PRIMARY KEY(id),
@@ -78,6 +78,24 @@ CREATE TABLE EXAME (
     data DATETIME NOT NULL,
     CONSTRAINT pk_exa PRIMARY KEY(id),    
     CONSTRAINT fk_exa_pac FOREIGN KEY(paciente) REFERENCES PACIENTE(id)
+);
+INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+);
+INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+);
+INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+);
+INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+);
+INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+);
+INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );
 INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
     'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'

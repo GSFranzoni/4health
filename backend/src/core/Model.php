@@ -25,7 +25,7 @@ abstract class Model {
             ->table($this->table)
             ->select($this->keysNotHidden())
             ->where($this->primary_key, '=', $primary)
-            ->get();
+            ->get()[0];
     }
 
     public function getAll() {

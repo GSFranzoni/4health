@@ -1,5 +1,5 @@
 <template>
-  <q-item :to="link" exact>
+  <q-item :to="link">
     <q-item-section avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -17,12 +17,10 @@ export default {
       type: String,
       required: true
     },
-
     link: {
       type: String,
       default: '#'
     },
-
     icon: {
       type: String,
       default: ''

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios';
 
 // import example from './module-example'
 
@@ -14,15 +15,28 @@ Vue.use(Vuex)
  * with the Store instance.
  */
 
-export default function (/* { ssrContext } */) {
-  const Store = new Vuex.Store({
-    state: {
-      user: null
+const Store = new Vuex.Store({
+  state: {
+    usuario: null,
+    info: null
+  },
+  mutations: {
+    setInfo(state, u) {
+      state.info = u;
     },
-    // enable strict mode (adds overhead!)
-    // for dev mode only
-    strict: process.env.DEV
-  })
+    setUsuario(state, u) {
+      state.usuario = u;
+    },
+    logout(state) {
+      state.usuario = null;
+      localStorage.removeItem('token');
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  },
+  // enable strict mode (adds overhead!)
+  // for dev mode only
+  strict: process.env.DEV
+})
 
-  return Store
-}
+export default Store;
+

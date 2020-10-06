@@ -44,7 +44,6 @@ class Exame extends Model {
             ->select($this->keys())
             ->where('paciente', $pac_id)
             ->get();  
-            
     }
 
 }

@@ -26,7 +26,9 @@ class Usuario extends Model {
             'hidden' => true 
         ];
         $this->fields['ativo'] = [
-            'type' => 'boolean'
+            'type' => 'boolean',
+            'hidden' => true,
+            'nullable' => true
         ];
         $this->fields['tipo_usuario'] = [
             'type' => 'integer',
@@ -44,7 +46,7 @@ class Usuario extends Model {
             ->select()
             ->where('cpf', $cpf)
             ->where('senha', $senha)
-            ->get();  
+            ->get()[0];  
     }
 
 }

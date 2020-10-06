@@ -2,6 +2,7 @@
 
 namespace Model;
 
+use Core\Database;
 use Core\Model;
 use Core\Validation;
 
@@ -30,8 +31,16 @@ class Medico extends Model {
         ];
         $this->fields['usuario'] = [
             'type' => 'integer',
-            'validate' => 'Core\Validation::required' 
+            'nullable' => true
         ];
+    }
+
+    public function getByUsuario($usr_id) {
+        return Database::getQueryBuilder()
+            ->table($this->table)
+            ->select($this->keys())
+            ->where('usuario', $usr_id)
+            ->get()[0];  
     }
 
 }

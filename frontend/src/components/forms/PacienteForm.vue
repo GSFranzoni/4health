@@ -1,7 +1,7 @@
 <template>
-  <q-card class="form">
+  <q-card class="q-ma-sm">
     <q-card-section>
-      <div class="text-h5 text-primary">Cadastro de paciente</div>
+      <div class="text-h6">Cadastro de paciente</div>
     </q-card-section>
     <q-card-section>
       <q-input class="q-mb-sm" outlined v-model="paciente.nome" label="Nome" />
@@ -36,31 +36,11 @@
         v-model="paciente.telefone"
         label="Telefone"
       />
-      <q-input
-        class="q-mb-sm"
-        outlined
-        v-model="paciente.usuario.cpf"
-        label="Cpf"
-      />
-      <q-input
-        class="q-mb-sm"
-        outlined
-        v-model="paciente.usuario.senha"
-        label="Senha"
-      />
-      <q-toggle
-        class="q-mb-sm"
-        v-model="paciente.usuario.ativo"
-        checked-icon="check"
-        color="primary"
-        label="Ativo"
-        unchecked-icon="clear"
-      />
     </q-card-section>
     <q-card-actions align="right">
-      <q-btn @click="$emit('cancel')" flat color="grey-9" label="Cancelar" />
+      <q-btn @click="back" flat color="grey-9" label="Voltar" />
       <q-btn
-        @click="$emit('save', paciente)"
+        @click="id? edit(): save()"
         class="q-ma-sm"
         color="primary"
         label="Salvar"
@@ -70,31 +50,51 @@
 </template>
 
 <script>
+import PacienteService from '../../services/PacienteService';
+import Notification from '../../util/Notification';
+
 export default {
-  props: [ "record" ],
+  props: [ "id" ],
   data() {
     return {
       paciente: {
         nome: "",
-        crm: "",
-        especialidade: "",
-        usuario: {
-          cpf: "",
-          senha: "",
-          ativo: true
-        },
+        uf: "",
+        cidade: "",
+        logradouro: "",
+        bairro: "",
+        numero_casa: "",
+        telefone: ""
       },
     };
   },
+  methods: {
+    save() {
+      PacienteService.insert(this.paciente)
+        .then(Notification.positive)
+        .catch(Notification.negative);
+    },
+    edit() {
+      PacienteService.update(this.id, this.paciente)
+        .then(Notification.positive)
+        .catch(Notification.negative);
+    },
+    back() {
+      this.$router.go(-1);
+    }
+  },
   mounted() {
-    this.paciente = this.record? { ...this.record }: this.paciente;
+    if(!this.id) {
+      return;
+    }
+    PacienteService.get(this.id).then(
+      response => {
+        this.paciente = response.data.body;
+      }
+    );
   },
 };
 </script>
 
 <style>
-.form {
-  width: 600px;
-  max-width: 90vw;
-}
 </style>
