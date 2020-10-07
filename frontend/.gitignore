@@ -6,6 +6,8 @@ node_modules
 .quasar
 /dist
 
+.vscode
+
 # Cordova related directories and files
 /src-cordova/node_modules
 /src-cordova/platforms
