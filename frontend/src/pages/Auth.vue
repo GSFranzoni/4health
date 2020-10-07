@@ -48,7 +48,6 @@ export default {
       AuthService.login(this.cpf, this.senha)
         .then((response) => {
           const { token, usuario } = response.data;
-          axios.defaults.headers.common["Authorization"] = token;
           this.$store.commit("setUsuario", usuario);
           localStorage.setItem("token", token);
           Notification.positive(response);

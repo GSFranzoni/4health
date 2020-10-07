@@ -8,6 +8,7 @@ use Controller\TipoUsuarioController;
 use Controller\UsuarioController;
 use Errors\DefaultException;
 use Middlewares\AdminAuthMiddleware;
+use Middlewares\AuthMiddleware;
 use Middlewares\MedicoAuthMiddleware;
 use Middlewares\PacienteAuthMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
@@ -57,26 +58,19 @@ use ($app) {
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 
-
 $app->post('/usuarios/auth', UsuarioController::class . ':login');
 $app->post('/usuarios/me', UsuarioController::class . ':me');
 
-$app->get('/tipos/{id}', TipoUsuarioController::class . ':get');
-$app->get('/tipos', TipoUsuarioController::class . ':getAll');
-$app->get('/medicos/{id}', MedicoController::class . ':get');
-$app->get('/pacientes/{id}/exames', ExameController::class . ':getByPaciente');
-$app->get('/medicos/{id}/exames', ExameController::class . ':getByMedico');
-$app->get('/medicos/{id}/solicitacoes', AtendimentoSolicitacaoController::class . ':getByMedico');
-$app->put('/solicitacoes/{id}', AtendimentoSolicitacaoController::class . ':update');
-$app->post('/solicitacoes', AtendimentoSolicitacaoController::class . ':insert');
-$app->post('/exames', ExameController::class . ':insert');
-$app->get('/solicitacoes', AtendimentoSolicitacaoController::class . ':getAll');
-$app->get('/exames/{id}', ExameController::class . ':get');
-	
-$app->get('/pacientes/{id}', PacienteController::class . ':get');
+$app->group('', function (RouteCollectorProxy $group) {
+	$group->get('/exames/{id}', ExameController::class . ':get');
+	$group->get('/medicos', MedicoController::class . ':getAll');
+	$group->get('/pacientes/{id}/exames', ExameController::class . ':getByPaciente');
+	$group->get('/pacientes', PacienteController::class . ':getAll');
+	$group->get('/medicos/{id}', MedicoController::class . ':get');
+	$group->get('/pacientes/{id}', PacienteController::class . ':get');
+})->add(new AuthMiddleware());
 
 $app->group('', function (RouteCollectorProxy $group) {
-
 	$group->get('/usuarios/{id}', UsuarioController::class . ':get');
 	$group->get('/usuarios', UsuarioController::class . ':getAll');
 	$group->put('/usuarios/{id}', UsuarioController::class . ':update');
@@ -86,18 +80,21 @@ $app->group('', function (RouteCollectorProxy $group) {
 	$group->post('/medicos', MedicoController::class . ':insert');
 	$group->put('/medicos/{id}', MedicoController::class . ':update');
 	$group->delete('/medicos/{id}', MedicoController::class . ':delete');
-	$group->get('/medicos', MedicoController::class . ':getAll');
 
-	$group->get('/pacientes', PacienteController::class . ':getAll');
 	$group->post('/pacientes', PacienteController::class . ':insert');
 	$group->delete('/pacientes/{id}', PacienteController::class . ':delete');
 	$group->put('/pacientes/{id}', PacienteController::class . ':update');
-})/*->add(new AdminAuthMiddleware())*/;
+})->add(new AdminAuthMiddleware());
 
 $app->group('', function (RouteCollectorProxy $group) {
+	$group->get('/medicos/{id}/solicitacoes', AtendimentoSolicitacaoController::class . ':getByMedico');
+	$group->get('/medicos/{id}/exames', ExameController::class . ':getByMedico');
+	$group->post('/exames', ExameController::class . ':insert');
+	$group->put('/solicitacoes/{id}', AtendimentoSolicitacaoController::class . ':update');
 })->add(new MedicoAuthMiddleware());
 
 $app->group('', function (RouteCollectorProxy $group) {
+	$group->post('/solicitacoes', AtendimentoSolicitacaoController::class . ':insert');
 })->add(new PacienteAuthMiddleware());
 
 

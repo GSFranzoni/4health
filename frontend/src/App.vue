@@ -6,10 +6,12 @@
 <script>
 import AuthService from './services/AuthService';
 import Notification from './util/Notification';
+import axios from 'axios';
 
 export default {
   name: 'App',
-  mounted() {
+  created() {
+    
   },
 }
 </script>

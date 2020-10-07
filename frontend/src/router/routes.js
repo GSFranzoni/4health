@@ -1,5 +1,6 @@
 import AuthService from '../services/AuthService';
 import Store from '../store/index';
+import axios from 'axios';
 
 const routes = [
   {
@@ -15,6 +16,7 @@ const routes = [
       AuthService.me(token).then(res => {
         Store.commit('setUsuario', res.data.usuario);
         Store.commit('setInfo', res.data.info);
+        axios.defaults.headers.common["Authorization"] = token;
         next();
       })
       .catch(err => {
