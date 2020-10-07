@@ -60,7 +60,6 @@ $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 $app->post('/usuarios/auth', UsuarioController::class . ':login');
 $app->post('/usuarios/me', UsuarioController::class . ':me');
 
-
 $app->group('', function (RouteCollectorProxy $group) {
 	$group->post('/solicitacoes', AtendimentoSolicitacaoController::class . ':insert');
 	$group->get('/medicos/disponiveis', MedicoController::class . ':getDisponiveis');
@@ -100,11 +99,8 @@ $app->group('', function (RouteCollectorProxy $group) {
 	$group->put('/solicitacoes/{id}', AtendimentoSolicitacaoController::class . ':update');
 })->add(new MedicoAuthMiddleware());
 
-
-
 $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
 	throw new HttpNotFoundException($request);
 });
-
 
 $app->run();
