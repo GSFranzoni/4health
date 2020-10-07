@@ -23,6 +23,7 @@ export default {
             name: 'data',
             type: 'date',
             label: 'Data',
+            mask: 'date',
             rules: ['date']
         },
         {

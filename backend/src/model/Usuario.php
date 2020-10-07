@@ -46,7 +46,19 @@ class Usuario extends Model {
             ->select()
             ->where('cpf', $cpf)
             ->where('senha', $senha)
+            ->where('ativo', '=', true)
             ->get()[0];  
+    }
+
+    public function anonimizar($id, $usuario) {
+        $usuario_anonimo = [
+            'cpf' => hash_hmac('ripemd160', $usuario['cpf'], getenv('secret'))
+        ];
+        return Database::getQueryBuilder()
+            ->table($this->table)
+            ->update($usuario_anonimo)
+            ->where($this->primary_key, '=', $id)
+            ->execute();
     }
 
 }

@@ -58,4 +58,21 @@ class Paciente extends Model {
             ->get()[0];  
     }
 
+    public function anonimizar($id, $paciente) {
+        $paciente_anonimo = [
+            'nome' => hash_hmac('ripemd160', $paciente['nome'], getenv('secret')),
+            'uf' => hash_hmac('ripemd160', $paciente['uf'], getenv('secret')),
+            'cidade' => hash_hmac('ripemd160', $paciente['cidade'], getenv('secret')),
+            'logradouro' => hash_hmac('ripemd160', $paciente['logradouro'], getenv('secret')),
+            'bairro' => hash_hmac('ripemd160', $paciente['bairro'], getenv('secret')),
+            'numero_casa' => hash_hmac('ripemd160', $paciente['numero_casa'], getenv('secret')),
+            'telefone' => '(00) 0 0000-0000'
+        ];
+        return Database::getQueryBuilder()
+            ->table($this->table)
+            ->update($paciente_anonimo)
+            ->where($this->primary_key, '=', $id)
+            ->execute();
+    }
+
 }

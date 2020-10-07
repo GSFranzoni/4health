@@ -2,7 +2,7 @@
   <div>
     <List
       :actions="actions"
-      title="Médicos"
+      title="Médicos disponíveis"
       :columns="columns"
       :data="medicos"
     />
@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     reload() {
-      MedicoService.getAll().then((response) => {
+      MedicoService.getDisponiveis().then((response) => {
         this.medicos = response.data.body;
       });
     },

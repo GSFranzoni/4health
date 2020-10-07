@@ -5,7 +5,8 @@ export default {
             name: 'data',
             type: 'date',
             label: 'Data',
-            rules: ['date']
+            rules: ['date'],
+            mask: 'date'
         },
         {
             name: 'horario',

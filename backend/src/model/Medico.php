@@ -43,4 +43,12 @@ class Medico extends Model {
             ->get()[0];  
     }
 
+    public function getDisponiveis() {
+        $query = "SELECT * FROM MEDICO WHERE id NOT IN (
+                    SELECT DISTINCT medico
+                    FROM ATENDIMENTO_SOLICITACAO
+                    WHERE aceito IS NULL);";
+        return Database::query($query);
+    }
+
 }

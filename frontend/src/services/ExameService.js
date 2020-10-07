@@ -10,6 +10,9 @@ export default {
     },
     insert: (exame) => {
         return axios.post(`http://localhost:8100/exames`, exame);
+    },
+    update: (id, exame) => {
+        return axios.put(`http://localhost:8100/exames/${id}`, exame);
     }
     
 };

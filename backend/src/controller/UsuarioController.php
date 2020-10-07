@@ -21,17 +21,23 @@ class UsuarioController extends Controller {
     }
 
     public function login(Request $request, Response $response, $args) {
+        
         $data = $request->getParsedBody();
+        $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
+
         $result = parent::$model->getByCpfSenha($data['cpf'], $data['senha']);
         if(empty($result)) {
             throw new UnauthorizedException("Cpf e senha não correspondem!");
         }
+
         $payload = array(
             "id" => $result['id'],
             "tipo_usuario" => $result['tipo_usuario']
         );
+
         JWT::$leeway = getenv("leeway");
         $jwt = JWT::encode($payload, getenv("secret"));
+
         $json = json_encode([
             'message' => 'Login efetuado com sucesso!',
             'token' => $jwt,
@@ -89,6 +95,7 @@ class UsuarioController extends Controller {
         $data = $request->getParsedBody();
         $paciente_id = $args['id'];
         $data['tipo_usuario'] = 3;
+        $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
         $id = self::$model->save($data);
         (new Paciente)->update($paciente_id, ['usuario' => $id]);
         $json = json_encode([
@@ -103,6 +110,7 @@ class UsuarioController extends Controller {
         $data = $request->getParsedBody();
         $medico_id = $args['id'];
         $data['tipo_usuario'] = 2;
+        $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
         $id = self::$model->save($data);
         (new Medico)->update($medico_id, ['usuario' => $id]);
         $json = json_encode([

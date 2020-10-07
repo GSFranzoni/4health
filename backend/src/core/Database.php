@@ -40,6 +40,12 @@ class Database {
         });
     }
 
+    public static function query($queryString) {
+        $statement = Database::getInstance()->prepare($queryString);
+        $statement->execute();
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public static function last(): int {
         return static::getInstance()->lastInsertId();
     }

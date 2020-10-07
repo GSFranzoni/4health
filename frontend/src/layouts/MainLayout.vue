@@ -11,7 +11,7 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
         <q-toolbar-title> 4HEALTH </q-toolbar-title>
-        <Solicitacao/>
+        <Solicitacao />
         <q-btn flat color="white" label="Sair" @click="logout"></q-btn>
       </q-toolbar>
     </q-header>
@@ -29,6 +29,7 @@
           :key="link.title"
           v-bind="link"
         />
+        <Anonimizar />
       </q-list>
     </q-drawer>
 
@@ -47,6 +48,7 @@
 <script>
 import EssentialLink from "components/EssentialLink.vue";
 import Solicitacao from "components/Solicitacao.vue";
+import Anonimizar from "components/Anonimizar.vue";
 import SolicitacaoService from "../services/SolicitacaoService";
 
 const linksData = [
@@ -96,7 +98,7 @@ const linksData = [
 
 export default {
   name: "MainLayout",
-  components: { EssentialLink, Solicitacao },
+  components: { EssentialLink, Solicitacao, Anonimizar },
   data() {
     return {
       leftDrawerOpen: false,
@@ -119,6 +121,6 @@ export default {
       this.$store.commit("logout");
       this.$router.push("/auth");
     },
-  }
+  },
 };
 </script>

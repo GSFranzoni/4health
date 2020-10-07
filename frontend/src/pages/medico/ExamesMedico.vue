@@ -19,6 +19,11 @@ export default {
       exames: [],
       actions: [
         {
+          icon: "edit",
+          color: "primary",
+          handle: this.openDialogEdit,
+        },
+        {
           icon: "search",
           color: "grey-8",
           handle: this.openDialogView,
@@ -48,8 +53,28 @@ export default {
       Dialog.create({
         component: Exame,
         ...exame,
-      }).onOk(() => {
-        this.reload();
+      });
+    },
+    openDialogEdit(exame) {
+      Dialog.create({
+        component: Form,
+        config: ExameFormConfig,
+        title: "Edição de exame",
+        init: { 
+          ...exame, 
+          data: exame.data.split(' ')[0].replaceAll('-', '/'), 
+          horario: exame.data.split(' ')[1].substr(0, 5)
+        }
+      }).onOk(({ record, hide }) => {
+        ExameService.update(exame.id, { 
+          laudo: exame.laudo,
+          resultado: exame.resultado,
+          nome: exame.nome,
+          data: `${record.data} ${record.horario}:00`.replaceAll('/', '-')
+        })
+        .then(Notification.positive)
+        .then(hide)
+        .catch(Notification.negative);
       });
     },
   },

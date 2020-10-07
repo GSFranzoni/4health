@@ -15,4 +15,14 @@ class MedicoController extends Controller {
         parent::$model = new Medico;
     }
 
+    public function getDisponiveis(Request $request, Response $response, $args) {
+        $result  = self::$model->getDisponiveis();
+        $json = json_encode([
+            'message' => 'Dados recuperados com sucesso',
+            'body' => $result ?? []
+        ]);
+        $response->getBody()->write($json);
+        return $response;
+    }
+
 }

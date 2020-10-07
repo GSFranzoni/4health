@@ -4,7 +4,6 @@ use Controller\AtendimentoSolicitacaoController;
 use Controller\ExameController;
 use Controller\MedicoController;
 use Controller\PacienteController;
-use Controller\TipoUsuarioController;
 use Controller\UsuarioController;
 use Errors\DefaultException;
 use Middlewares\AdminAuthMiddleware;
@@ -61,6 +60,13 @@ $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 $app->post('/usuarios/auth', UsuarioController::class . ':login');
 $app->post('/usuarios/me', UsuarioController::class . ':me');
 
+
+$app->group('', function (RouteCollectorProxy $group) {
+	$group->post('/solicitacoes', AtendimentoSolicitacaoController::class . ':insert');
+	$group->get('/medicos/disponiveis', MedicoController::class . ':getDisponiveis');
+	$group->post('/paciente/anonimizar', PacienteController::class . ':anonimizar');
+})->add(new PacienteAuthMiddleware());
+
 $app->group('', function (RouteCollectorProxy $group) {
 	$group->get('/exames/{id}', ExameController::class . ':get');
 	$group->get('/medicos', MedicoController::class . ':getAll');
@@ -90,12 +96,10 @@ $app->group('', function (RouteCollectorProxy $group) {
 	$group->get('/medicos/{id}/solicitacoes', AtendimentoSolicitacaoController::class . ':getByMedico');
 	$group->get('/medicos/{id}/exames', ExameController::class . ':getByMedico');
 	$group->post('/exames', ExameController::class . ':insert');
+	$group->put('/exames/{id}', ExameController::class . ':update');
 	$group->put('/solicitacoes/{id}', AtendimentoSolicitacaoController::class . ':update');
 })->add(new MedicoAuthMiddleware());
 
-$app->group('', function (RouteCollectorProxy $group) {
-	$group->post('/solicitacoes', AtendimentoSolicitacaoController::class . ':insert');
-})->add(new PacienteAuthMiddleware());
 
 
 $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {

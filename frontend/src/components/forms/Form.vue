@@ -14,8 +14,8 @@
               outlined
               :label="field.label"
               v-model="record[field.name]"
-              mask="date"
-              :rules="['date']"
+              :mask="field.mask"
+              :rules="field.rules"
             > 
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">

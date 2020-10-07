@@ -8,6 +8,9 @@ export default {
     get: (id) => {
         return axios.get(`http://localhost:8100/medicos/${id}`);
     },
+    getDisponiveis: () => {
+        return axios.get(`http://localhost:8100/medicos/disponiveis`);
+    },
     insert: (medico) => {
         return axios.post(`http://localhost:8100/medicos`, medico);
     },

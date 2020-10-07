@@ -16,6 +16,9 @@ export default {
     },
     delete: (id) => {
         return axios.delete(`http://localhost:8100/pacientes/${id}`);
+    },
+    anonimizar: () => {
+        return axios.post(`http://localhost:8100/paciente/anonimizar`);
     }
     
 };
