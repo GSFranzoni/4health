@@ -63,7 +63,7 @@ export default {
     }
   },
   mounted() {
-    this.reload();
+    this.$refs.ficha.reload();
   },
 };
 </script>

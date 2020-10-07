@@ -9,9 +9,6 @@ import Notification from './util/Notification';
 import axios from 'axios';
 
 export default {
-  name: 'App',
-  created() {
-    
-  },
+  name: 'App'
 }
 </script>

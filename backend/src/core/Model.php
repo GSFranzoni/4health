@@ -95,7 +95,7 @@ abstract class Model {
         return array_keys($this->fields);
     }
 
-    private function validFields($data) {
+    protected function validFields($data) {
         return array_filter($data, function ($key) {
             return in_array($key, $this->keys());
         }, ARRAY_FILTER_USE_KEY);

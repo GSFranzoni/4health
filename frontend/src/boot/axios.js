@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import axios from 'axios';
-import Notification from '../util/Notification';
 import { Loading } from 'quasar';
+
+axios.defaults.baseURL = process.env.API.replaceAll("\"", "");
 
 Vue.prototype.$axios = axios
 

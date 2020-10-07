@@ -94,10 +94,13 @@ class UsuarioController extends Controller {
     public function insertPaciente(Request $request, Response $response, $args) {
         $data = $request->getParsedBody();
         $paciente_id = $args['id'];
+
         $data['tipo_usuario'] = 3;
         $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
+
         $id = self::$model->save($data);
         (new Paciente)->update($paciente_id, ['usuario' => $id]);
+
         $json = json_encode([
             'message' => 'Dados salvos com sucesso',
             'body' => [ 'id' => $id ]
@@ -109,16 +112,27 @@ class UsuarioController extends Controller {
     public function insertMedico(Request $request, Response $response, $args) {
         $data = $request->getParsedBody();
         $medico_id = $args['id'];
+
         $data['tipo_usuario'] = 2;
         $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
+
         $id = self::$model->save($data);
         (new Medico)->update($medico_id, ['usuario' => $id]);
+
         $json = json_encode([
             'message' => 'Dados salvos com sucesso',
             'body' => [ 'id' => $id ]
         ]);
         $response->getBody()->write($json);
         return $response;
+    }
+
+    public function update(Request $request, Response $response, $args) {
+        $data = $request->getParsedBody();
+        $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
+        
+        $request = $request->withParsedBody($data);
+        return parent::update($request, $response, $args);
     }
 
 }

@@ -3,22 +3,22 @@ import axios from 'axios';
 export default {
 
     getAll: () => {
-        return axios.get('http://localhost:8100/pacientes');
+        return axios.get(`pacientes`);
     },
     get: (id) => {
-        return axios.get(`http://localhost:8100/pacientes/${id}`);
+        return axios.get(`pacientes/${id}`);
     },
     insert: (paciente) => {
-        return axios.post(`http://localhost:8100/pacientes`, paciente);
+        return axios.post(`pacientes`, paciente);
     },
     update: (id, paciente) => {
-        return axios.put(`http://localhost:8100/pacientes/${id}`, paciente);
+        return axios.put(`pacientes/${id}`, paciente);
     },
     delete: (id) => {
-        return axios.delete(`http://localhost:8100/pacientes/${id}`);
+        return axios.delete(`pacientes/${id}`);
     },
     anonimizar: () => {
-        return axios.post(`http://localhost:8100/paciente/anonimizar`);
+        return axios.post(`paciente/anonimizar`);
     }
     
 };
