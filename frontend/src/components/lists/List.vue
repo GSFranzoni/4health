@@ -7,7 +7,7 @@
     no-data-label="Nenhum registro encontrado..."
     row-key="name"
   >
-    <template v-if="$store.state.usuario.tipo_usuario===1" v-slot:top-right>
+    <template v-if="$store.state.usuario && $store.state.usuario.tipo_usuario===1" v-slot:top-right>
       <q-btn @click="$emit('create')" color="primary" icon="add" round></q-btn>
     </template>
 

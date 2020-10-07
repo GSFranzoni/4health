@@ -9,6 +9,9 @@
 
 <script>
 export default {
-  name: 'PageIndex'
+  name: 'PageIndex',
+  mounted() {
+    this.$store.commit("setSolicitacao", null);
+  }
 }
 </script>

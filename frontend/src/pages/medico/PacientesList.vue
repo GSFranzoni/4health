@@ -10,9 +10,12 @@
 <script>
 import PacienteService from "../../services/PacienteService";
 import List from "../../components/lists/List";
-import paciente_json from "../../components/lists/paciente_json.json";
+import Form from "../../components/forms/Form";
+import UsuarioFormConfig from "../../components/forms/UsuarioFormConfig";
+import PacienteFormConfig from "../../components/forms/PacienteFormConfig";
 import Notification from "../../util/Notification";
-import SolicitacaoService from "../../services/SolicitacaoService";
+import paciente_json from "../../components/lists/paciente_json.json";
+import UsuarioService from "../../services/UsuarioService";
 
 export default {
   data() {
@@ -20,20 +23,21 @@ export default {
       pacientes: [],
       actions: [
         {
-          icon: "library_books",
+          icon: "loyalty",
           color: "primary",
-          handle: this.verFicha,
+          handle: this.viewFicha,
         },
       ],
       columns: paciente_json.columns,
     };
   },
   components: {
-    List
+    List,
+    Form,
   },
   methods: {
-    verFicha(paciente) {
-        this.$router.push(`/medico/pacientes/${paciente.id}/ficha`);
+    viewFicha(paciente) {
+      this.$router.push(`/medico/pacientes/${paciente.id}/exames`);
     },
     reload() {
       PacienteService.getAll().then((response) => {

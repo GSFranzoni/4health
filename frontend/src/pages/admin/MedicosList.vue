@@ -11,9 +11,12 @@
 <script>
 import MedicoService from "../../services/MedicoService";
 import List from "../../components/lists/List";
-import MedicoForm from "../../components/forms/MedicoForm";
+import Form from "../../components/forms/Form";
 import Notification from "../../util/Notification";
-import medico_json from '../../components/lists/medico_json.json';
+import medico_json from "../../components/lists/medico_json.json";
+import UsuarioFormConfig from "../../components/forms/UsuarioFormConfig";
+import MedicoFormConfig from "../../components/forms/MedicoFormConfig";
+import UsuarioService from "../../services/UsuarioService";
 
 export default {
   data() {
@@ -33,39 +36,80 @@ export default {
         {
           icon: "person_pin",
           color: "green-7",
-          handle: this.handleUser,
+          handle: this.formUser,
         },
       ],
       columns: medico_json.columns,
     };
   },
   components: {
-    MedicoForm,
     List,
+    Form
   },
   methods: {
-    handleUser(medico) {
-      medico.usuario? this.editUser(medico.usuario): this.createUser(medico);
+    async formUser(medico) {
+      this.$q
+        .dialog({
+          component: Form,
+          config: UsuarioFormConfig,
+          init: medico.usuario
+            ? (await UsuarioService.get(medico.usuario)).data.body
+            : {},
+        })
+        .onOk(({ record, hide }) => {
+          hide();
+          medico.usuario
+            ? this.editUsuario(medico.usuario, record)
+            : this.saveUsuario(medico.id, record);
+        });
     },
-    createUser(medico) {
-      this.$router.push({ path: `${medico.id}/usuario/create` });
+    saveUsuario(medicoId, usuario) {
+      UsuarioService.insertMedico(medicoId, usuario)
+        .then(Notification.positive)
+        .catch(Notification.negative)
+        .finally(() => this.reload());
     },
-    editUser(usuario) {
-      this.$router.push({ path: `../usuarios/${usuario}/edit` });
+    editUsuario(usuarioId, usuario) {
+      UsuarioService.update(usuarioId, usuario)
+        .then(Notification.positive)
+        .catch(Notification.negative)
+        .finally(() => this.reload());
     },
-    edit(medico) {
-      this.$router.push({ path: `${medico.id}/edit` });
+    async edit(medico) {
+      this.$q
+        .dialog({
+          component: Form,
+          config: MedicoFormConfig,
+          init: (await MedicoService.get(medico.id)).data.body,
+        })
+        .onOk(({ record, hide }) => {
+          MedicoService.update(medico.id, record)
+            .then(Notification.positive)
+            .then(hide)
+            .catch(Notification.negative)
+            .finally(() => this.reload());
+        });
     },
     create() {
-      this.$router.push({ path: `create` });
+      this.$q
+        .dialog({
+          component: Form,
+          config: MedicoFormConfig,
+          init: {},
+        })
+        .onOk(({ record, hide }) => {
+          MedicoService.insert(record)
+            .then(Notification.positive)
+            .then(hide)
+            .catch(Notification.negative)
+            .finally(() => this.reload());
+        });
     },
     remove(record) {
       MedicoService.delete(record.id)
         .then(Notification.positive)
         .catch(Notification.negative)
-        .finally(() => {
-          this.reload();
-        })
+        .finally(() => this.reload());
     },
     confirmRemove(record) {
       this.$q
@@ -83,7 +127,7 @@ export default {
       MedicoService.getAll().then((response) => {
         this.medicos = response.data.body;
       });
-    }
+    },
   },
   mounted() {
     this.reload();

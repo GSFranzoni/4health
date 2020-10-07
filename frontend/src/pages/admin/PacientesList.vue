@@ -11,9 +11,12 @@
 <script>
 import PacienteService from "../../services/PacienteService";
 import List from "../../components/lists/List";
-import PacienteForm from "../../components/forms/PacienteForm";
+import Form from "../../components/forms/Form";
+import UsuarioFormConfig from "../../components/forms/UsuarioFormConfig";
+import PacienteFormConfig from "../../components/forms/PacienteFormConfig";
 import Notification from "../../util/Notification";
-import paciente_json from '../../components/lists/paciente_json.json';
+import paciente_json from "../../components/lists/paciente_json.json";
+import UsuarioService from "../../services/UsuarioService";
 
 export default {
   data() {
@@ -33,39 +36,80 @@ export default {
         {
           icon: "person_pin",
           color: "green-7",
-          handle: this.handleUser,
+          handle: this.formUser,
         },
       ],
       columns: paciente_json.columns,
     };
   },
   components: {
-    PacienteForm,
     List,
+    Form,
   },
   methods: {
-    handleUser(paciente) {
-      paciente.usuario? this.editUser(paciente.usuario): this.createUser(paciente);
+    async formUser(paciente) {
+      this.$q
+        .dialog({
+          component: Form,
+          config: UsuarioFormConfig,
+          init: paciente.usuario
+            ? (await UsuarioService.get(paciente.usuario)).data.body
+            : {},
+        })
+        .onOk(({ record, hide }) => {
+          hide();
+          paciente.usuario
+            ? this.editUsuario(paciente.usuario, record)
+            : this.saveUsuario(paciente.id, record);
+        });
     },
-    createUser(paciente) {
-      this.$router.push({ path: `${paciente.id}/usuario/create` });
+    saveUsuario(pacienteId, usuario) {
+      UsuarioService.insertPaciente(pacienteId, usuario)
+        .then(Notification.positive)
+        .catch(Notification.negative)
+        .finally(() => this.reload());
     },
-    editUser(usuario) {
-      this.$router.push({ path: `../usuarios/${usuario}/edit` });
+    editUsuario(usuarioId, usuario) {
+      UsuarioService.update(usuarioId, usuario)
+        .then(Notification.positive)
+        .catch(Notification.negative)
+        .finally(() => this.reload());
     },
-    edit(paciente) {
-      this.$router.push({ path: `${paciente.id}/edit` });
+    async edit(paciente) {
+      this.$q
+        .dialog({
+          component: Form,
+          config: PacienteFormConfig,
+          init: (await PacienteService.get(paciente.id)).data.body,
+        })
+        .onOk(({ record, hide }) => {
+          PacienteService.update(paciente.id, record)
+            .then(Notification.positive)
+            .then(hide)
+            .catch(Notification.negative)
+            .finally(() => this.reload());
+        });
     },
     create() {
-      this.$router.push({ path: `create` });
+      this.$q
+        .dialog({
+          component: Form,
+          config: PacienteFormConfig,
+          init: {},
+        })
+        .onOk(({ record, hide }) => {
+          PacienteService.insert(record)
+            .then(Notification.positive)
+            .then(hide)
+            .catch(Notification.negative)
+            .finally(() => this.reload());
+        });
     },
     remove(record) {
       PacienteService.delete(record.id)
         .then(Notification.positive)
         .catch(Notification.negative)
-        .finally(() => {
-          this.reload();
-        })
+        .finally(() => this.reload());
     },
     confirmRemove(record) {
       this.$q
@@ -83,7 +127,7 @@ export default {
       PacienteService.getAll().then((response) => {
         this.pacientes = response.data.body;
       });
-    }
+    },
   },
   mounted() {
     this.reload();

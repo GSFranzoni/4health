@@ -36,10 +36,11 @@ class AtendimentoSolicitacaoController extends Controller {
         }
         $id = self::$model->save($data);
         $json = json_encode([
-            'message' => 'Dados recuperados com sucesso',
+            'message' => 'Dados salvos com sucesso',
             'body' => [ 'id' => $id ]
         ]);
         $response->getBody()->write($json);
         return $response;
     }
+    
 }

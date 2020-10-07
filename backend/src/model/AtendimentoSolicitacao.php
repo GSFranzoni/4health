@@ -28,13 +28,13 @@ class AtendimentoSolicitacao extends Model {
             'type' => 'boolean',
             'nullable' => true
         ];
-        $this->fields['data_atendimento'] = [
+        $this->fields['data'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::datetime'
         ];
     }
 
-    function getByMedico($med_primary) {
+    function getByMedico(int $med_primary) {
         $this->validate([
             'medico' => $med_primary
         ]);
@@ -46,7 +46,7 @@ class AtendimentoSolicitacao extends Model {
             ->get();
     }
 
-    function getByPaciente($pac_primary) {
+    function getByPaciente(int $pac_primary) {
         $this->validate([
             'paciente' => $pac_primary
         ]);

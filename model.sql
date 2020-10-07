@@ -56,47 +56,42 @@ CREATE TABLE ATENDIMENTO_SOLICITACAO (
     paciente INT NOT NULL,
 	medico INT NOT NULL,
     aceito BOOLEAN DEFAULT NULL,
-    data_atendimento DATETIME NOT NULL,
+    data DATETIME NOT NULL,
     CONSTRAINT pk_ats PRIMARY KEY(id),
     CONSTRAINT fk_ats_pac FOREIGN KEY(paciente) REFERENCES PACIENTE(id),
     CONSTRAINT fk_ats_med FOREIGN KEY(medico) REFERENCES MEDICO(id)
 );
-INSERT INTO ATENDIMENTO_SOLICITACAO (paciente, medico, data_atendimento) VALUES (1, 1, '2020-10-06 20:00:00');
-CREATE TABLE ATENDIMENTO (
-	id INT NOT NULL AUTO_INCREMENT,
-    atendimento_solicitacao INT NOT NULL,
-    finalizado DATETIME DEFAULT NULL,
-    CONSTRAINT pk_ate PRIMARY KEY(id),
-    CONSTRAINT fk_ate_ats FOREIGN KEY(atendimento_solicitacao) REFERENCES ATENDIMENTO_SOLICITACAO(id)
-);
+INSERT INTO ATENDIMENTO_SOLICITACAO (paciente, medico, data) VALUES (1, 1, '2020-10-06 20:00:00');
 CREATE TABLE EXAME (
 	id INT NOT NULL AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
     resultado VARCHAR(800) NOT NULL,
     paciente INT NOT NULL,
+    medico INT NOT NULL,
     laudo VARCHAR(800),
     data DATETIME NOT NULL,
     CONSTRAINT pk_exa PRIMARY KEY(id),    
-    CONSTRAINT fk_exa_pac FOREIGN KEY(paciente) REFERENCES PACIENTE(id)
+    CONSTRAINT fk_exa_pac FOREIGN KEY(paciente) REFERENCES PACIENTE(id),    
+    CONSTRAINT fk_exa_med FOREIGN KEY(medico) REFERENCES MEDICO(id)
 );
-INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
-    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+INSERT INTO EXAME(nome, resultado, paciente, medico, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );
-INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
-    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+INSERT INTO EXAME(nome, resultado, paciente, medico, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );
-INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
-    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+INSERT INTO EXAME(nome, resultado, paciente, medico, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );
-INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
-    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+INSERT INTO EXAME(nome, resultado, paciente, medico, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );
-INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
-    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+INSERT INTO EXAME(nome, resultado, paciente, medico, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );
-INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
-    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+INSERT INTO EXAME(nome, resultado, paciente, medico, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );
-INSERT INTO EXAME(nome, resultado, paciente, laudo, data) VALUES (
-    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 'O paciente tem aids', '2020-10-06 20:00:00'
+INSERT INTO EXAME(nome, resultado, paciente, medico, laudo, data) VALUES (
+    'Exame de sangue', 'Exame de sangueExame de sangueExame de sangue', 1, 1, 'O paciente tem aids', '2020-10-06 20:00:00'
 );

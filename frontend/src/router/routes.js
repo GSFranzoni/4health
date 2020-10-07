@@ -5,6 +5,7 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    redirect: '/home',
     beforeEnter: (to, from, next) => {
       const token = localStorage.getItem('token');
       if(!token) {
@@ -23,12 +24,13 @@ const routes = [
     },
     children: [
       {
-        path: '',
+        path: 'home',
         component: () => import('pages/Index.vue'),
       },
       {
         path: 'paciente',
-        component: () => import('layouts/PacienteRoot.vue'),
+        component: () => import('layouts/Root.vue'),
+        redirect: '/home',
         beforeEnter: (to, from, next) => {
           if(Store.state.usuario.tipo_usuario == 3) {
             next();
@@ -40,22 +42,19 @@ const routes = [
         },
         children: [
           {
-            path: '',
-            component: () => import('pages/Index.vue'),
-          },
-          {
             path: 'medicos',
             component: () => import('pages/paciente/MedicosList.vue'),
           },
           {
             path: 'ficha',
-            component: () => import('pages/paciente/Ficha.vue'),
+            component: () => import('pages/paciente/ExamesList.vue'),
           }
         ]
       },
       {
         path: 'medico',
-        component: () => import('layouts/MedicoRoot.vue'),
+        component: () => import('layouts/Root.vue'),
+        redirect: '/home',
         beforeEnter: (to, from, next) => {
           if(Store.state.usuario.tipo_usuario == 2) {
             next();
@@ -67,23 +66,25 @@ const routes = [
         },
         children: [
           {
-            path: '',
-            component: () => import('pages/Index.vue'),
-          },
-          {
             path: 'pacientes',
             component: () => import('pages/medico/PacientesList.vue'),
           },
           {
-            path: 'pacientes/:id/ficha',
-            component: () => import('pages/paciente/Ficha.vue'),
+            path: 'exames',
+            component: () => import('pages/medico/ExamesMedico.vue'),
+            props: true
+          },
+          {
+            path: 'pacientes/:paciente/exames',
+            component: () => import('pages/medico/ExamesPaciente.vue'),
             props: true
           }
         ]
       },
       {
         path: 'admin',
-        component: () => import('layouts/AdminRoot.vue'),
+        component: () => import('layouts/Root.vue'),
+        redirect: '/home',
         beforeEnter: (to, from, next) => {
           if(Store.state.usuario.tipo_usuario == 1) {
             next();
@@ -95,68 +96,23 @@ const routes = [
         },
         children: [
           {
-            path: '',
-            component: () => import('pages/Index.vue'),
-          },
-          {
             path: 'pacientes',
-            component: () => import('layouts/Pacientes.vue'),
-            redirect: 'pacientes/list',
+            component: () => import('layouts/Root.vue'),
             children: [
               {
-                path: 'list',
+                path: '',
                 component: () => import('pages/admin/PacientesList.vue'),
-              },
-              {
-                path: ':id/edit',
-                component: () => import('components/forms/PacienteForm.vue'),
-                props: true
-              },
-              {
-                path: 'create',
-                component: () => import('components/forms/PacienteForm.vue'),
-              },
-              {
-                path: ':paciente/usuario/create',
-                component: () => import('components/forms/UsuarioForm.vue'),
-                props: true
               }
             ]
-          },
+          }, 
           {
             path: 'medicos',
-            component: () => import('layouts/Medicos.vue'),
-            redirect: 'medicos/list',
+            component: () => import('layouts/Root.vue'),
             children: [
               {
-                path: 'list',
+                path: '',
                 component: () => import('pages/admin/MedicosList.vue'),
-              },
-              {
-                path: ':id/edit',
-                component: () => import('components/forms/MedicoForm.vue'),
-                props: true
-              },
-              {
-                path: 'create',
-                component: () => import('components/forms/MedicoForm.vue'),
-              },
-              {
-                path: ':medico/usuario/create',
-                component: () => import('components/forms/UsuarioForm.vue'),
-                props: true
               }
-            ]
-          },
-          {
-            path: 'usuarios',
-            component: () => import('layouts/Usuarios.vue'),
-            children: [
-              {
-                path: ':id/edit',
-                component: () => import('components/forms/UsuarioForm.vue'),
-                props: true
-              },
             ]
           }
         ]

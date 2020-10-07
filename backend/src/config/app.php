@@ -65,8 +65,11 @@ $app->get('/tipos/{id}', TipoUsuarioController::class . ':get');
 $app->get('/tipos', TipoUsuarioController::class . ':getAll');
 $app->get('/medicos/{id}', MedicoController::class . ':get');
 $app->get('/pacientes/{id}/exames', ExameController::class . ':getByPaciente');
+$app->get('/medicos/{id}/exames', ExameController::class . ':getByMedico');
 $app->get('/medicos/{id}/solicitacoes', AtendimentoSolicitacaoController::class . ':getByMedico');
+$app->put('/solicitacoes/{id}', AtendimentoSolicitacaoController::class . ':update');
 $app->post('/solicitacoes', AtendimentoSolicitacaoController::class . ':insert');
+$app->post('/exames', ExameController::class . ':insert');
 $app->get('/solicitacoes', AtendimentoSolicitacaoController::class . ':getAll');
 $app->get('/exames/{id}', ExameController::class . ':get');
 	

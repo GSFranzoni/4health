@@ -18,7 +18,8 @@ Vue.use(Vuex)
 const Store = new Vuex.Store({
   state: {
     usuario: null,
-    info: null
+    info: null,
+    solicitacao: null
   },
   mutations: {
     setInfo(state, u) {
@@ -26,6 +27,9 @@ const Store = new Vuex.Store({
     },
     setUsuario(state, u) {
       state.usuario = u;
+    },
+    setSolicitacao(state, u) {
+      state.solicitacao = u;
     },
     logout(state) {
       state.usuario = null;

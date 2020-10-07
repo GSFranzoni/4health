@@ -43,13 +43,14 @@ class UsuarioController extends Controller {
     }
 
     private function getInfo($tipo, $usr_id) {
-        if($tipo == 2) {
-            return (new Medico)->getByUsuario($usr_id);
+        switch($tipo) {
+            case 2:
+                return (new Medico)->getByUsuario($usr_id);
+            case 3:
+                return (new Paciente)->getByUsuario($usr_id);
+            default:
+                return [];
         }
-        if($tipo == 3) {
-            return (new Paciente)->getByUsuario($usr_id);
-        }
-        return [];
     }
 
     public function me(Request $request, Response $response, $args) {

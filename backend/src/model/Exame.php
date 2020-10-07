@@ -14,7 +14,7 @@ class Exame extends Model {
         $this->primary_key = "id";
 
         $this->fields['id'] = [
-            'type' => 'int'
+            'type' => 'integer'
         ];
         $this->fields['nome'] = [
             'type' => 'string',
@@ -26,13 +26,17 @@ class Exame extends Model {
         ];
         $this->fields['laudo'] = [
             'type' => 'string',
-            'validate' => 'Core\Validation::datetime'
+            'validate' => 'Core\Validation::required'
         ];
         $this->fields['data'] = [
             'type' => 'string',
             'validate' => 'Core\Validation::datetime'
         ];
         $this->fields['paciente'] = [
+            'type' => 'integer',
+            'validate' => 'Core\Validation::required'
+        ];
+        $this->fields['medico'] = [
             'type' => 'integer',
             'validate' => 'Core\Validation::required'
         ];
@@ -43,6 +47,14 @@ class Exame extends Model {
             ->table($this->table)
             ->select($this->keys())
             ->where('paciente', $pac_id)
+            ->get();  
+    }
+
+    public function getByMedico($med_id) {
+        return Database::getQueryBuilder()
+            ->table($this->table)
+            ->select($this->keys())
+            ->where('medico', $med_id)
             ->get();  
     }
 

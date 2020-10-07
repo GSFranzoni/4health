@@ -13,16 +13,23 @@
             "sortable": true
         },
         {
-            "name": "crm",
-            "label": "Crm",
-            "field": "crm",
+            "name": "medico",
+            "label": "Médico",
+            "field": "medico",
             "align": "left",
             "sortable": true
         },
         {
-            "name": "especialidade",
-            "label": "Especialidade",
-            "field": "especialidade",
+            "name": "paciente",
+            "label": "Paciente",
+            "field": "paciente",
+            "align": "left",
+            "sortable": true
+        },
+        {
+            "name": "data",
+            "label": "Data",
+            "field": "data",
             "align": "left",
             "sortable": true
         }
