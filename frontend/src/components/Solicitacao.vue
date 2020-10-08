@@ -20,7 +20,7 @@
             <q-card-section>
               <div style="font-size: 1rem">
                 O paciente {{ paciente.nome }} fez uma solicitação de
-                atendimento no dia {{ solicitacao.data_atendimento }}
+                atendimento no dia {{ solicitacao.data }}
               </div>
             </q-card-section>
             <q-card-actions align="right">
@@ -58,11 +58,6 @@ export default {
     };
   },
   computed: mapState(["solicitacao"]),
-  async mounted() {
-    this.paciente = (
-      await PacienteService.get(this.solicitacao.paciente)
-    ).data.body;
-  },
   methods: {
     updateAceite(aceito) {
       SolicitacaoService.update(this.solicitacao.id, { aceito: aceito })
@@ -77,9 +72,14 @@ export default {
     if (this.$store.state.usuario.tipo_usuario != 2) {
       return;
     }
-    SolicitacaoService.getByMedico(this.$store.state.info.id).then((res) => {
-      this.$store.commit("setSolicitacao", res.data.body[0]);
-    });
+    SolicitacaoService.getByMedico(this.$store.state.info.id).then(
+      async (res) => {
+        this.$store.commit("setSolicitacao", res.data.body[0]);
+        this.paciente = (
+          await PacienteService.get(this.solicitacao.paciente)
+        ).data.body;
+      }
+    );
   },
 };
 </script>
