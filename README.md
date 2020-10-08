@@ -6,4 +6,3 @@ Aplicação para gerenciamento de prontuários médicos
 * cp backend/.env.example backend/.env
 * docker-compose up
 * docker exec php composer install
-* docker exec php composer dump-autoload -o
