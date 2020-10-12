@@ -1,11 +1,21 @@
 <template>
-  <List
-    :actions="actions"
-    @create="create"
-    title="Médicos"
-    :columns="columns"
-    :data="medicos"
-  />
+  <div>
+    <List
+      :actions="actions"
+      @create="create"
+      title="Médicos"
+      :columns="columns"
+      :data="medicos"
+      :addButton="true"
+    />
+    <q-page-sticky
+      @click="create"
+      position="bottom-right"
+      :offset="[18, 18]"
+    >
+      <q-btn fab icon="add" color="primary" />
+    </q-page-sticky>
+  </div>
 </template>
 
 <script>
@@ -13,7 +23,7 @@ import MedicoService from "../../services/MedicoService";
 import List from "../../components/lists/List";
 import Form from "../../components/forms/Form";
 import Notification from "../../util/Notification";
-import medico_json from "../../components/lists/medico_json.json";
+import MedicosList from "../../components/lists/medicos_list";
 import UsuarioFormConfig from "../../components/forms/UsuarioFormConfig";
 import MedicoFormConfig from "../../components/forms/MedicoFormConfig";
 import UsuarioService from "../../services/UsuarioService";
@@ -39,12 +49,12 @@ export default {
           handle: this.formUser,
         },
       ],
-      columns: medico_json.columns,
+      columns: MedicosList.columns,
     };
   },
   components: {
     List,
-    Form
+    Form,
   },
   methods: {
     async formUser(medico) {

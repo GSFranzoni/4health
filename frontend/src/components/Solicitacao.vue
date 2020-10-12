@@ -20,7 +20,7 @@
             <q-card-section>
               <div style="font-size: 1rem">
                 O paciente {{ paciente.nome }} fez uma solicitação de
-                atendimento no dia {{ solicitacao.data }}
+                atendimento no dia {{ format(solicitacao.data) }}
               </div>
             </q-card-section>
             <q-card-actions align="right">
@@ -67,19 +67,22 @@ export default {
           setTimeout(() => this.$store.commit("setSolicitacao", null), 200);
         });
     },
+    format(datetime) {
+      const date = datetime.split(" ")[0];
+      const time = datetime.split(" ")[1].substr(0, 5);
+
+      return `${date.split("-").reverse().join("/").toString()} às ${time}h`;
+    },
   },
-  mounted() {
+  async mounted() {
     if (this.$store.state.usuario.tipo_usuario != 2) {
       return;
     }
-    SolicitacaoService.getByMedico(this.$store.state.info.id).then(
-      async (res) => {
-        this.$store.commit("setSolicitacao", res.data.body[0]);
-        this.paciente = (
-          await PacienteService.get(this.solicitacao.paciente)
-        ).data.body;
-      }
-    );
+    const solicitacoes = (await SolicitacaoService.getByMedico(this.$store.state.info.id)).data.body;
+    if(solicitacoes.length > 0) {
+      this.$store.commit("setSolicitacao", solicitacoes[0]);
+      this.paciente = (await PacienteService.get(this.solicitacao.paciente)).data.body;
+    }
   },
 };
 </script>

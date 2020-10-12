@@ -3,6 +3,8 @@
 namespace Controller;
 
 use Core\Controller;
+use Core\Database;
+use DateTime;
 use Errors\UnauthorizedException;
 use Exception;
 use Model\Usuario;
@@ -23,36 +25,38 @@ class UsuarioController extends Controller {
     public function login(Request $request, Response $response, $args) {
         
         $data = $request->getParsedBody();
-        $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
 
-        $result = parent::$model->getByCpfSenha($data['cpf'], $data['senha']);
-        if(empty($result)) {
+        $usuario = parent::$model->getByCpf($data['cpf']);
+
+        if(empty($usuario)) {
+            throw new UnauthorizedException("O cpf informado não existe na base dados!");
+        }
+
+        if(!password_verify($data['senha'], $usuario['senha'])) {
             throw new UnauthorizedException("Cpf e senha não correspondem!");
         }
 
         $payload = array(
-            "id" => $result['id'],
-            "tipo_usuario" => $result['tipo_usuario']
+            "id" => $usuario['id'],
+            "tipo_usuario" => $usuario['tipo_usuario'],
+            "iat" => (new DateTime)->getTimestamp(),
+            "exp" => (new DateTime)->getTimestamp() + getenv("exp")
         );
 
-        JWT::$leeway = getenv("leeway");
-        $jwt = JWT::encode($payload, getenv("secret"));
-
-        $json = json_encode([
+        unset($usuario['senha']);
+        return $this->makeResponse($response, [
             'message' => 'Login efetuado com sucesso!',
-            'token' => $jwt,
-            'usuario' => $result,
-            'info' => $this->getInfo($result['tipo_usuario'], $result['id'])
+            'token' => JWT::encode($payload, getenv("secret")),
+            'usuario' => $usuario,
+            'info' => $this->getInfo($usuario['tipo_usuario'], $usuario['id'])
         ]);
-        $response->getBody()->write($json);
-        return $response;
     }
 
     private function getInfo($tipo, $usr_id) {
         switch($tipo) {
-            case 2:
+            case TipoUsuario::MEDICO:
                 return (new Medico)->getByUsuario($usr_id);
-            case 3:
+            case TipoUsuario::PACIENTE:
                 return (new Paciente)->getByUsuario($usr_id);
             default:
                 return [];
@@ -60,79 +64,65 @@ class UsuarioController extends Controller {
     }
 
     public function me(Request $request, Response $response, $args) {
+
         $token = $request->getParsedBody()['token'];
         $payload = null;
+
         try {
             $payload = (array) JWT::decode($token, getenv('secret'), array('HS256'));
         }
         catch(Exception $e) {
             throw new UnauthorizedException();
         }
-        $json = json_encode([
+
+        return $this->makeResponse($response, [
             'message' => 'Dados recuperados com sucesso!',
             'token' => $token,
-            'usuario' => parent::$model->get($payload['id']),
+            'usuario' => self::$model->get($payload['id']),
             'info' => $this->getInfo($payload['tipo_usuario'], $payload['id'])
         ]);
-        $response->getBody()->write($json);
-        return $response;
-    }
-
-    public function getAll(Request $request, Response $response, $args) {
-        $result  = self::$model->getAll();
-        foreach ($result as &$row) {
-            $row['tipo_usuario'] = (new TipoUsuario)->get($row['tipo_usuario']);
-        }
-        $json = json_encode([
-            'message' => 'Dados recuperados com sucesso',
-            'body' => $result ?? []
-        ]);
-        $response->getBody()->write($json);
-        return $response;
     }
 
     public function insertPaciente(Request $request, Response $response, $args) {
+        
         $data = $request->getParsedBody();
-        $paciente_id = $args['id'];
 
-        $data['tipo_usuario'] = 3;
-        $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
+        $data['tipo_usuario'] = TipoUsuario::PACIENTE;
+
+        Database::getInstance()->beginTransaction();
 
         $id = self::$model->save($data);
-        (new Paciente)->update($paciente_id, ['usuario' => $id]);
 
-        $json = json_encode([
+        (new Paciente)->update($args['id'], ['usuario' => $id]);
+
+        Database::getInstance()->commit();
+
+        return $this->makeResponse($response, [
             'message' => 'Dados salvos com sucesso',
             'body' => [ 'id' => $id ]
         ]);
-        $response->getBody()->write($json);
-        return $response;
+
     }
 
     public function insertMedico(Request $request, Response $response, $args) {
-        $data = $request->getParsedBody();
-        $medico_id = $args['id'];
 
-        $data['tipo_usuario'] = 2;
-        $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
+        $data = $request->getParsedBody();
+
+        $data['tipo_usuario'] = TipoUsuario::MEDICO;
+
+        Database::getInstance()->beginTransaction();
 
         $id = self::$model->save($data);
-        (new Medico)->update($medico_id, ['usuario' => $id]);
 
-        $json = json_encode([
+        (new Medico)->update($args['id'], ['usuario' => $id]);
+
+        Database::getInstance()->commit();
+
+        return $this->makeResponse($response, [
             'message' => 'Dados salvos com sucesso',
             'body' => [ 'id' => $id ]
         ]);
-        $response->getBody()->write($json);
-        return $response;
-    }
 
-    public function update(Request $request, Response $response, $args) {
-        $data = $request->getParsedBody();
-        $data['senha'] = hash_hmac('ripemd160', $data['senha'], getenv('secret'));
-        
-        $request = $request->withParsedBody($data);
-        return parent::update($request, $response, $args);
     }
-
+    
 }

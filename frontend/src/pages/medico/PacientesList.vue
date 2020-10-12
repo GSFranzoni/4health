@@ -14,7 +14,7 @@ import Form from "../../components/forms/Form";
 import UsuarioFormConfig from "../../components/forms/UsuarioFormConfig";
 import PacienteFormConfig from "../../components/forms/PacienteFormConfig";
 import Notification from "../../util/Notification";
-import paciente_json from "../../components/lists/paciente_json.json";
+import PacientesList from "../../components/lists/pacientes_list";
 import UsuarioService from "../../services/UsuarioService";
 
 export default {
@@ -28,7 +28,7 @@ export default {
           handle: this.viewFicha,
         },
       ],
-      columns: paciente_json.columns,
+      columns: PacientesList.columns,
     };
   },
   components: {

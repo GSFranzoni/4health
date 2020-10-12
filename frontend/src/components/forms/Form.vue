@@ -14,7 +14,6 @@
               outlined
               :label="field.label"
               v-model="record[field.name]"
-              :mask="field.mask"
               :rules="field.rules"
             > 
               <template v-slot:append>

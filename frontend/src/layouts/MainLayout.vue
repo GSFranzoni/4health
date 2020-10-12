@@ -77,7 +77,7 @@ const linksData = [
     tipo: 2,
   },
   {
-    title: "Exames",
+    title: "Meus exames",
     icon: "loyalty",
     link: "/medico/exames",
     tipo: 2,

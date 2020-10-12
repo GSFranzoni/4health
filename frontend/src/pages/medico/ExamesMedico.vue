@@ -1,5 +1,5 @@
 <template>
-  <List :actions="actions" title="Exames" :columns="columns" :data="exames" />
+  <List :actions="actions" title="Meus exames" :columns="columns" :data="exames" />
 </template>
 
 <script>
@@ -7,11 +7,11 @@ import List from "../../components/lists/List";
 import Notification from "../../util/Notification";
 import Form from "../../components/forms/Form";
 import Exame from "../../components/Exame";
-import exame_json from "../../components/lists/exame_json.json";
 import ExameService from "../../services/ExameService";
 import { Dialog } from "quasar";
 import { mapState } from "vuex";
 import ExameFormConfig from "../../components/forms/ExameFormConfig";
+import ExamesList from "../../components/lists/exames_list";
 
 export default {
   data() {
@@ -19,35 +19,32 @@ export default {
       exames: [],
       actions: [
         {
-          icon: "edit",
-          color: "primary",
-          handle: this.openDialogEdit,
-        },
-        {
           icon: "search",
           color: "grey-8",
           handle: this.openDialogView,
         },
+        {
+          icon: "edit",
+          color: "primary",
+          handle: this.editExame,
+        },
+        {
+          icon: "delete",
+          color: "red-8",
+          handle: this.removeExame,
+        }
       ],
-      columns: exame_json.columns,
+      columns: ExamesList.columns,
     };
   },
   components: {
     List,
-    Form
+    Form,
   },
   computed: mapState(["info"]),
   methods: {
-    reload() {
-      ExameService.getByMedico(this.info.id).then((response) => {
-        this.exames = response.data.body.map((exame) => {
-          return {
-            ...exame,
-            medico: exame.medico.nome,
-            paciente: exame.paciente.nome,
-          };
-        });
-      });
+    async reload() {
+      this.exames = (await ExameService.getByMedico(this.info.id)).data.body;
     },
     openDialogView(exame) {
       Dialog.create({
@@ -55,28 +52,40 @@ export default {
         ...exame,
       });
     },
-    openDialogEdit(exame) {
+    editExame(exame) {
       Dialog.create({
         component: Form,
         config: ExameFormConfig,
-        title: "Edição de exame",
-        init: { 
-          ...exame, 
-          data: exame.data.split(' ')[0].replaceAll('-', '/'), 
+        init: {
+          ...exame,
+          data: exame.data.split(' ')[0].replaceAll('-', '/'),
           horario: exame.data.split(' ')[1].substr(0, 5)
         }
       }).onOk(({ record, hide }) => {
-        ExameService.update(exame.id, { 
-          laudo: exame.laudo,
-          resultado: exame.resultado,
-          nome: exame.nome,
-          data: `${record.data} ${record.horario}:00`.replaceAll('/', '-')
+        ExameService.update(exame.id, {
+          ...record,
+          data: `${record.data} ${record.horario}`.replaceAll('/', '-')
         })
-        .then(Notification.positive)
-        .then(hide)
-        .catch(Notification.negative);
+          .then(Notification.positive)
+          .then(hide)
+          .then(this.reload)
+          .catch(Notification.negative);
       });
     },
+    removeExame(exame) {
+      Dialog.create({
+          title: "Confirmação",
+          message: "Você realmente deseja excluir o registro?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          ExameService.delete(exame.id)
+            .then(Notification.positive)
+            .then(this.reload)
+            .catch(Notification.negative);
+        });
+    }
   },
   mounted() {
     this.reload();

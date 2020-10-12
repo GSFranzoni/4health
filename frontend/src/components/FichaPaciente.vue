@@ -1,5 +1,5 @@
 <template>
-  <List :actions="actions" title="Exames do paciente" :columns="columns" :data="exames" />
+  <List :actions="actions" :title="`Exames do paciente ${paciente.nome}`" :columns="columns" :data="exames" />
 </template>
 
 <script>
@@ -7,8 +7,9 @@ import List from "../components/lists/List";
 import Notification from "../util/Notification";
 import Form from "../components/forms/Form";
 import Exame from "../components/Exame";
-import exame_json from "../components/lists/exame_json.json";
+import ExamesList from "../components/lists/exames_list";
 import ExameService from "../services/ExameService";
+import PacienteService from "../services/PacienteService";
 import { Dialog } from "quasar";
 import { mapState } from "vuex";
 
@@ -17,6 +18,7 @@ export default {
   data() {
     return {
       exames: [],
+      paciente: {},
       actions: [
         {
           icon: "search",
@@ -24,25 +26,17 @@ export default {
           handle: this.openDialog,
         },
       ],
-      columns: exame_json.columns,
+      columns: ExamesList.columns,
     };
   },
-  computed: mapState(["info"]),
   components: {
     List,
     Form,
   },
   methods: {
-    reload() {
-      ExameService.getByPaciente(this.id).then((response) => {
-        this.exames = response.data.body.map((exame) => {
-          return {
-            ...exame,
-            medico: exame.medico.nome,
-            paciente: exame.paciente.nome,
-          };
-        });
-      });
+    async reload() {
+      this.exames = (await ExameService.getByPaciente(this.id)).data.body;
+      this.paciente = (await PacienteService.get(this.id)).data.body;
     },
     openDialog(exame) {
       Dialog.create({

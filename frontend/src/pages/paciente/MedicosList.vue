@@ -12,7 +12,7 @@
 <script>
 import MedicoService from "../../services/MedicoService";
 import List from "../../components/lists/List";
-import medico_json from "../../components/lists/medico_json.json";
+import MedicosList from "../../components/lists/medicos_list";
 import Notification from "../../util/Notification";
 import Form from "../../components/forms/Form";
 import { Dialog } from "quasar";
@@ -30,7 +30,7 @@ export default {
           handle: this.openDialog,
         },
       ],
-      columns: medico_json.columns,
+      columns: MedicosList.columns,
     };
   },
   components: {
@@ -50,7 +50,7 @@ export default {
         config: SolicitacaoFormConfig,
       }).onOk(({ record, hide }) => {
         SolicitacaoService.insert({
-          data: `${record.data} ${record.horario}:00`.replaceAll('/', '-'),
+          data: `${record.data} ${record.horario}`.replaceAll('/', '-'),
           medico: medico.id,
           paciente: this.$store.state.info.id,
         })

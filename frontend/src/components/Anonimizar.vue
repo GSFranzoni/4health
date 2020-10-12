@@ -26,8 +26,7 @@ export default {
         .dialog({
           title: "Confirmação",
           message: "Você realmente deseja excluir o seu registro?",
-          cancel: true,
-          persistent: true,
+          cancel: true
         })
         .onOk(() => {
           this.anonimizar();

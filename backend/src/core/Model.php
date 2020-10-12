@@ -16,9 +16,9 @@ abstract class Model {
         Database::getQueryBuilder()
             ->table($this->table)
             ->insert($values)
-            ->execute();
+            ->execute();;
         return Database::last();
-    }
+    }    
 
     public function get(int $primary) {
         return Database::getQueryBuilder()
@@ -38,7 +38,7 @@ abstract class Model {
     public function update($primary, $data) {
         $values = $this->validFields($data);
         $this->validate($values);
-        return Database::getQueryBuilder()
+        Database::getQueryBuilder()
             ->table($this->table)
             ->update($values)
             ->where($this->primary_key, '=', $primary)
@@ -46,7 +46,7 @@ abstract class Model {
     }
 
     public function delete($primary) {
-        return Database::getQueryBuilder()
+        Database::getQueryBuilder()
             ->table($this->table)
             ->delete()
             ->where($this->primary_key, '=', $primary)
@@ -102,42 +102,3 @@ abstract class Model {
     }
 
 }
-
-// abstract class Model implements \JsonSerializable {
-
-//     public $id, $validations = [], $table;
-
-//     public function __construct($array = [], $table) {
-//         $this->id = 0;
-//         $this->fill($array);
-//         $this->table = $table;
-//     }
-
-//     private function fill(array $array) {
-//         foreach ($array as $key => $value) {
-//             $this->$key = $value;
-//         }
-//         return $this;
-//     }
-
-//     private function validate($field, $value) {
-//         if(!$this->validations[$field]) {
-//             return true;
-//         }
-//         return call_user_func($this->validations[$field], $value);
-//     }
-
-//     public function jsonSerialize(): array {
-//         $array = [];
-//         foreach ($this->fields() as $field => $_) {
-//             $array[$field] = $this->$field;
-//         }
-//         return $array;
-//     }
-
-//     public function json(): string {
-//         return json_encode($this);
-//     }
-
-//     public abstract static function fields(): array;
-// }

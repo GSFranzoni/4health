@@ -57,5 +57,6 @@ class Exame extends Model {
             ->where('medico', $med_id)
             ->get();  
     }
+    
 
 }

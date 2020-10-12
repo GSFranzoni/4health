@@ -1,11 +1,17 @@
 <template>
-  <List
-    :actions="actions"
-    @create="create"
-    title="Pacientes"
-    :columns="columns"
-    :data="pacientes"
-  />
+  <div>
+    <List
+      :actions="actions"
+      @create="create"
+      title="Pacientes"
+      :columns="columns"
+      :data="pacientes"
+      :addButton="true"
+    />
+    <q-page-sticky @click="create" position="bottom-right" :offset="[18, 18]">
+      <q-btn fab icon="add" color="primary" />
+    </q-page-sticky>
+  </div>
 </template>
 
 <script>
@@ -15,7 +21,7 @@ import Form from "../../components/forms/Form";
 import UsuarioFormConfig from "../../components/forms/UsuarioFormConfig";
 import PacienteFormConfig from "../../components/forms/PacienteFormConfig";
 import Notification from "../../util/Notification";
-import paciente_json from "../../components/lists/paciente_json.json";
+import PacientesList from "../../components/lists/pacientes_list";
 import UsuarioService from "../../services/UsuarioService";
 
 export default {
@@ -39,7 +45,7 @@ export default {
           handle: this.formUser,
         },
       ],
-      columns: paciente_json.columns,
+      columns: PacientesList.columns,
     };
   },
   components: {

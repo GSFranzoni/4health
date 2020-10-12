@@ -1,7 +1,8 @@
 <template>
   <div>
+    <q-btn @click="$router.go(-1)" rounded class="q-ma-sm" flat color="white" icon="arrow_back_ios" text-color="black" label="Pacientes" />
     <FichaPaciente ref="ficha" :id="paciente" />
-    <q-page-sticky @click="openExameForm" position="top-right" :offset="[18, 18]">
+    <q-page-sticky @click="openExameForm" position="bottom-right" :offset="[18, 18]">
       <q-btn fab icon="add" color="primary" />
     </q-page-sticky>
   </div>
@@ -13,7 +14,6 @@ import Notification from "../../util/Notification";
 import Form from "../../components/forms/Form";
 import Exame from "../../components/Exame";
 import FichaPaciente from "../../components/FichaPaciente";
-import exame_json from "../../components/lists/exame_json.json";
 import ExameService from "../../services/ExameService";
 import { Dialog } from "quasar";
 import { mapState } from "vuex";
@@ -24,15 +24,6 @@ export default {
   props: ["paciente"],
   data() {
     return {
-      exames: [],
-      actions: [
-        {
-          icon: "search",
-          color: "grey-8",
-          handle: this.openDialogView,
-        },
-      ],
-      columns: exame_json.columns,
     };
   },
   components: {
@@ -48,7 +39,7 @@ export default {
       }).onOk(({ record, hide }) => {
         record = { 
           ...record, 
-          data: `${record.data} ${record.horario}:00`.replaceAll('/', '-'),
+          data: `${record.data} ${record.horario}`.replaceAll('/', '-'),
           paciente: parseInt(this.paciente),
           medico: this.$store.state.info.id
         };

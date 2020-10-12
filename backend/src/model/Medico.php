@@ -2,9 +2,11 @@
 
 namespace Model;
 
+use ClanCats\Hydrahon\Query\Sql\Func;
 use Core\Database;
 use Core\Model;
 use Core\Validation;
+use Errors\DefaultException;
 
 class Medico extends Model {
 
@@ -49,6 +51,37 @@ class Medico extends Model {
                     FROM ATENDIMENTO_SOLICITACAO
                     WHERE aceito IS NULL);";
         return Database::query($query);
+    }
+
+    public function delete($primary) {
+        
+        if($this->countSolicitacoes($primary) > 0) {
+            throw new DefaultException("O médico possui solicitações de atendimento cadastradas.");
+        } 
+
+        if($this->countExames($primary) > 0) {
+            throw new DefaultException("O médico possui exames cadastrados.");
+        } 
+
+        parent::delete($primary);
+    }
+
+    public function countSolicitacoes($primary) {
+        return (Database::getQueryBuilder()
+            ->table('ATENDIMENTO_SOLICITACAO')
+            ->select()
+            ->addField(new Func('count', 'id'), 'count')
+            ->where('medico', $primary)
+            ->execute())[0]['count'];
+    }
+
+    public function countExames($primary) {
+        return (Database::getQueryBuilder()
+            ->table('EXAME')
+            ->select()
+            ->addField(new Func('count', 'id'), 'count')
+            ->where('medico', $primary)
+            ->execute())[0]['count'];
     }
 
 }

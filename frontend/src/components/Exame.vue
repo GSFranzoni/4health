@@ -1,19 +1,16 @@
 <template>
   <q-dialog ref="dialog" @hide="onDialogHide">
     <q-card class="q-ma-sm q-pa-sm q-dialog-plugin">
-      <div class="float-right">
-        <q-card-section >
-        <div class="text-h5">Paciente</div>
-        <div class="text-grey">{{ paciente }}</div>
+      <q-card-section>
+        <div class="text-h4 text-primary">{{ nome }}</div>
       </q-card-section>
       <q-card-section>
-        <div class="text-h5">Médico</div>
-        <div class="text-grey">{{ medico }}</div>
+        <div>PACIENTE</div>
+        <div class="text-grey">{{ paciente.nome }}</div>
       </q-card-section>
-      </div>
       <q-card-section>
-        <div class="text-h5 text-primary">{{ nome }}</div>
-        <div class="text-grey">{{ data }}</div>
+        <div>MÉDICO</div>
+        <div class="text-grey">{{ medico.nome }}</div>
       </q-card-section>
       <q-card-section>
         <div class="text-h6">RESULTADO</div>
@@ -22,6 +19,9 @@
       <q-card-section>
         <div class="text-h6">LAUDO</div>
         <div>{{ laudo }}</div>
+      </q-card-section>
+      <q-card-section>
+        <div class="text-grey float-right q-my-sm">{{ format(data) }}</div>
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -50,9 +50,15 @@ export default {
     onCancelClick() {
       this.hide();
     },
+
+    format(datetime) {
+      const date = datetime.split(" ")[0];
+      const time = datetime.split(" ")[1].substr(0, 5);
+
+      return `${date.split("-").reverse().join("/").toString()} ${time}h`;
+    },
   },
-  async mounted() {
-  }
+  async mounted() {},
 };
 </script>
 

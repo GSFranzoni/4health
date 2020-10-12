@@ -4,13 +4,23 @@
     :title="title"
     :data="data"
     :columns="columns"
+    :filter="filter"
     no-data-label="Nenhum registro encontrado..."
     row-key="name"
   >
-    <template v-if="$store.state.usuario && $store.state.usuario.tipo_usuario===1" v-slot:top-right>
-      <q-btn @click="$emit('create')" color="primary" icon="add" round></q-btn>
+    <template v-slot:top-right>
+      <q-input
+        class="q-mt-md"
+        outlined
+        debounce="300"
+        v-model="filter"
+        placeholder="Pesquisar"
+      >
+        <template v-slot:prepend>
+          <q-icon name="search" />
+        </template>
+      </q-input>
     </template>
-
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
         <q-fab flat color="black" push icon="settings" direction="right">
@@ -24,31 +34,16 @@
         </q-fab>
       </q-td>
     </template>
-
-    <template v-slot:body-cell="props">
-      <q-td :props="props">
-        <div v-if="props.value == 0 || props.value == 1">
-          <q-icon
-            v-if="props.value == 1"
-            size="sm"
-            color="primary"
-            name="check_circle"
-          />
-          <q-icon v-else size="sm" color="red-8" name="cancel" />
-        </div>
-        <div v-else>
-          {{ props.value }}
-        </div>
-      </q-td>
-    </template>
   </q-table>
 </template>
 
 <script>
 export default {
-  props: ["title", "data", "columns", "actions"],
+  props: ["title", "data", "columns", "actions", "addButton"],
   data() {
-    return {};
+    return {
+      filter: ''
+    };
   },
   methods: {
     handle(action, value) {

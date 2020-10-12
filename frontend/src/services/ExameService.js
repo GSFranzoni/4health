@@ -13,6 +13,9 @@ export default {
     },
     update: (id, exame) => {
         return axios.put(`exames/${id}`, exame);
+    },
+    delete: (id) => {
+        return axios.delete(`exames/${id}`);
     }
     
 };
