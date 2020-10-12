@@ -8,5 +8,5 @@ Aplicação para gerenciamento de prontuários médicos
 * docker exec php composer install
 
 # Acesso do admin:
-* cpf: 140.526.066-12
+* cpf: 478.371.780-09
 * senha: 12345678
