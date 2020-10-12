@@ -19,7 +19,7 @@ CREATE TABLE USUARIO (
     CONSTRAINT pk_usr PRIMARY KEY(id),
     CONSTRAINT fk_usr_tipo FOREIGN KEY(tipo_usuario) REFERENCES TIPO_USUARIO(id)
 );
-INSERT INTO USUARIO (id, cpf, senha, ativo, tipo_usuario) VALUES (1, '140.526.066-12', '$2y$10$H.9myHAcYtDxY17FdcSNN.DrPJf.7x/6lqnRXAWRqIkvV4ppU72/6', 1, 1);
+INSERT INTO USUARIO (id, cpf, senha, ativo, tipo_usuario) VALUES (1, '478.371.780-09', '$2y$10$H.9myHAcYtDxY17FdcSNN.DrPJf.7x/6lqnRXAWRqIkvV4ppU72/6', 1, 1);
 CREATE TABLE PACIENTE (
     id INT NOT NULL AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
