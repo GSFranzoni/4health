@@ -52,8 +52,8 @@ import Notification from "../util/Notification";
 export default {
   data() {
     return {
-      cpf: "140.526.066-12",
-      senha: "12345678",
+      cpf: "",
+      senha: "",
     };
   },
   mounted() {},
